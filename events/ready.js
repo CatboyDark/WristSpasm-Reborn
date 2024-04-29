@@ -4,6 +4,6 @@ module.exports = {
 	name: Events.ClientReady,
 	once: true,
 	execute(client) {
-		console.log(`r`);
+		console.log(`test`);
 	},
 };
