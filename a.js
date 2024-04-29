@@ -13,10 +13,6 @@ const client = new Client({
     ] 
 });
 
-client.on("message", (message) => {
-    console.log(`Received message: ${message.content}`);
-});
-
 // Commands
 
 client.commands = new Collection();
