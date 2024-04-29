@@ -49,4 +49,11 @@ for (const file of eventFiles) {
 	}
 }
 
+
+client.on(Events.MessageCreate, () => {
+
+	console.log('Message Recieved');
+	
+});
+
 client.login(token);
