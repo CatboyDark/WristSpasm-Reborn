@@ -1,3 +1,4 @@
+```
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const client = new Client({ 
     intents: 
@@ -17,3 +18,4 @@ client.on("message", (message) =>
         message.channel.send("Hello, I'm a bot!");
     }
 });
+```
