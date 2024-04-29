@@ -49,4 +49,12 @@ for (const file of eventFiles) {
 	}
 }
 
+client.on("message", (message) => 
+{
+    if (message.author.bot) return;
+    if (message.content === "bot") {
+        message.channel.send("Hello, I'm a bot!");
+    }
+});
+
 client.login(token);
