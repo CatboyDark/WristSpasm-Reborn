@@ -6,5 +6,6 @@ module.exports = {
 	execute(client) 
 	{
 		console.log(`r`);
+		client.channels.cache.get('1234634679349415967').send({ content: 'Bot is online' });
 	},
 };
