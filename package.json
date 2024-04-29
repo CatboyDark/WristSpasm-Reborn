@@ -1,11 +1,13 @@
 {
   "name": "wristspasm-reborn",
-  "version": "1.0.0",
   "description": "The Official WristSpasm Bot!",
-  "main": "a.js",
+  "version": "1.0.0",
 
   "author": "CatboyDark",
   "license": "MIT",
+  "homepage": "https://github.com/CatboyDark/WristSpasm-Reborn",
+
+  "main": "a.js",
 
   "dependencies": 
   {
