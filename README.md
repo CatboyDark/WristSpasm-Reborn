@@ -7,6 +7,6 @@ Join our [Discord](https://discord.gg/DV4yR5p5KE)!
 
 Based on [WristSpasm-Discord-Bot](https://github.com/Wristspasm/Wristspasm-Discord-Bot)
 
-- [Calculus_](https://discord.com/users/1165302964093722697)
+- [Calculus_](https://github.com/DrRed96)
 - [DuckySoLucky](https://github.com/DuckySoLucky)
 - [Kathund](https://github.com/Kathund)
