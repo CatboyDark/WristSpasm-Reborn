@@ -53,7 +53,7 @@ client.on("message", (message) =>
 {
     if (message.author.bot) return;
 
-    if (message.content.toLowerCase().includes("bot")) {
+    if (message.content === "bot") {
         message.channel.send("Hello, I'm a bot!");
     }
 });
