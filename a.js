@@ -13,6 +13,10 @@ const client = new Client({
     ] 
 });
 
+client.on("message", (message) => {
+    console.log(`Received message: ${message.content}`);
+});
+
 // Commands
 
 client.commands = new Collection();
@@ -48,13 +52,5 @@ for (const file of eventFiles) {
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }
-
-client.on("message", (message) => 
-{
-    if (message.author.bot) return;
-    if (message.content === "bot") {
-        message.channel.send("Hello, I'm a bot!");
-    }
-});
 
 client.login(token);
