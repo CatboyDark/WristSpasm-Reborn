@@ -52,7 +52,8 @@ for (const file of eventFiles) {
 
 client.on(Events.MessageCreate, () => {
 
-	console.log('Message Recieved');
+	console.log(`Received message: ${message.content}`);
+	client.channels.cache.get('1234634679349415967').send({ embeds: [embed] });
 	
 });
 
