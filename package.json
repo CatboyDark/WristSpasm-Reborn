@@ -1,7 +1,7 @@
 {
   "name": "wristspasm-reborn",
   "version": "1.0.0",
-  "description": "��#\u0000 \u0000W\u0000r\u0000i\u0000s\u0000t\u0000S\u0000p\u0000a\u0000s\u0000m\u0000-\u0000R\u0000e\u0000b\u0000o\u0000r\u0000n\u0000\r\u0000 \u0000",
+  "description": "WristSpasm Reborn",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
