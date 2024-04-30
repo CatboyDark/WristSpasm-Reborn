@@ -4,10 +4,9 @@ module.exports =
 {
 	data: new SlashCommandBuilder()
 		.setName('role')
-		.setDescription('Edit a user\'s roles')
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles)
-        .addUserOption(option => option.setName('User').setDescription('')).setRequired(true)
-        .addRoleOption(option => option.setName('Role').setDescription('')).setRequired(true),
+		.setDescription('Add/Remove a user\'s roles')
+        .addUserOption(option => option.setName('user').setDescription('User').setRequired(true))
+        .addRoleOption(option => option.setName('role').setDescription('Role').setRequired(true)),
         
 	async execute(interaction) {
 		    await interaction.reply('It works!');
