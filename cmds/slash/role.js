@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
-const help = new EmbedBuilder()
+const role = new EmbedBuilder()
 	.setColor(0x000000)
 	.setTitle('WIP')
 
@@ -13,6 +13,6 @@ module.exports =
 		.addUserOption(option => option.setName('role').setDescription('Select a role').setRequired(true)),
 		
 	async execute(interaction) {
-		await interaction.reply({ embeds: [help] });
+		await interaction.reply({ embeds: [role] });
 	},
 };	
