@@ -7,8 +7,8 @@ const help = new EmbedBuilder()
 module.exports = 
 {
 	data: new SlashCommandBuilder()
-		.setName('help')
-		.setDescription('Helps you!'),
+		.setName('role')
+		.setDescription('roles you!'),
 		
 	async execute(interaction) {
 		await interaction.reply({ embeds: [help] });
