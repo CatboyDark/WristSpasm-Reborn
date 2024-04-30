@@ -1,4 +1,4 @@
-const { logs } = require('../config.json');
+const { logs } = require('../channels.json');
 const { Events, EmbedBuilder } = require('discord.js');
 
 const online = new EmbedBuilder()

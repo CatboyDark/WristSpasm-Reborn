@@ -9,8 +9,8 @@ module.exports =
 		.addUserOption(option => option.setName('user').setDescription('Select a user').setRequired(true))
 		.addRoleOption(option => option.setName('role').setDescription('Select a role').setRequired(true)),
 		
-	async execute(interaction) {
-
+	async execute(interaction) 
+	{
 		const user = interaction.options.getMember('user');
 		const role = interaction.options.getRole('role');
 
