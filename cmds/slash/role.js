@@ -8,9 +8,7 @@ module.exports =
 {
 	data: new SlashCommandBuilder()
 		.setName('role')
-		.setDescription('Add/Remove a user\'s roles')
-		.addUserOption(option => option.setName('user').setDescription('Select a user').setRequired(true))
-		.addUserOption(option => option.setName('role').setDescription('Select a role').setRequired(true)),
+		.setDescription('Add/Remove a user\'s roles'),
 		
 	async execute(interaction) {
 		await interaction.reply({ embeds: [role] });
