@@ -25,7 +25,7 @@ module.exports =
 			}
 		} 
 		else {
-			await interaction.reply({ embeds: [new EmbedBuilder().setDescription('You do not have permission to give this role.').setColor('#000000')] });
+			await interaction.reply({ embeds: [new EmbedBuilder().setDescription('You do not have permission to assign this role.').setColor('#000000')] });
 		}
 	}
 };
