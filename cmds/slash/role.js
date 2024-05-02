@@ -14,12 +14,18 @@ module.exports =
 		const user = interaction.options.getMember('user');
 		const role = interaction.options.getRole('role');
 
-		if (user.roles.cache.has(role.id)) { 
-			user.roles.remove(role).catch(console.error)
-			await interaction.reply({ embeds: [new EmbedBuilder().setDescription(`${user} is no longer ${role}`).setColor('#FF0000')] });
-		} else { 
-			user.roles.add(role).catch(console.error)
-			await interaction.reply({ embeds: [new EmbedBuilder().setDescription(`${user} is now ${role}`).setColor('#00FF00')] });
+		if (interaction.member.roles.highest.comparePositionTo(role) > 0) 
+		{
+			if (user.roles.cache.has(role.id)) { 
+				user.roles.remove(role).catch(console.error)
+				await interaction.reply({ embeds: [new EmbedBuilder().setDescription(`${user} is no longer ${role}.`).setColor('#FF0000')] });
+			} else { 
+				user.roles.add(role).catch(console.error)
+				await interaction.reply({ embeds: [new EmbedBuilder().setDescription(`${user} is now ${role}.`).setColor('#00FF00')] });
+			}
+		} 
+		else {
+			await interaction.reply({ embeds: [new EmbedBuilder().setDescription('You do not have permission to give this role.').setColor('#000000')] });
 		}
 	}
 };
