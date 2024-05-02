@@ -17,13 +17,13 @@ module.exports =
 		const info = new EmbedBuilder()
 			.setColor(0x000000)
 			.setThumbnail('https://i.imgur.com/uwqAaeb.png')
-			.setTitle('The Official WristSpasm Bot!')
+			.setTitle('WristSpasm')
 			.addFields(
 				{ name: '**Commands**', value: `${commandList}` },
-				{ name: '**✦ Credits ✦**', value: 
-					`<@1165302964093722697>
-					<@486155512568741900>
-					<@1169174913832202306>`}
+				{ name: '**Credits**', value: 
+					`✦ <@1165302964093722697>
+					✦ <@486155512568741900>
+					✦ <@1169174913832202306>`}
 			)
 			.setFooter({
 				text: "Created by @CatboyDark",
