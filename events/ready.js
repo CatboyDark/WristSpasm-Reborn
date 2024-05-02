@@ -1,4 +1,5 @@
 const { logs } = require('../channels.json');
+const welcome = require('../features/welcome.js')
 const { Events, EmbedBuilder } = require('discord.js');
 
 const online = new EmbedBuilder()
@@ -12,5 +13,7 @@ module.exports = {
 	{
 		console.log(`r`);
 		client.channels.cache.get(logs).send({ embeds: [online] });
+
+		welcome(client);
 	},
 };
