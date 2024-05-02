@@ -1,6 +1,6 @@
 # The Official WristSpasm Bot!
 
-![img](https://github.com/CatboyDark/WristSpasm-Reborn/blob/main/assets/ws%20extra%20smol.png)
+![img](https://github.com/CatboyDark/WristSpasm-Reborn/blob/main/assets/wristspazm_smol.png)
 
 For the WristSpasm guild on the [Hypixel Network](https://hypixel.net/). <br /> 
 Join our [Discord](https://discord.gg/DV4yR5p5KE)!
