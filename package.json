@@ -2,20 +2,15 @@
   "name": "wristspasm-reborn",
   "description": "The Official WristSpasm Bot!",
   "version": "1.0.0",
-
   "author": "CatboyDark",
   "license": "MIT",
   "homepage": "https://github.com/CatboyDark/WristSpasm-Reborn",
-
   "main": "a.js",
-
-  "dependencies": 
-  {
-    "discord.js": "^14.14.1"
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "mineflayer": "^4.20.1"
   },
-
-  "devDependencies": 
-  {
+  "devDependencies": {
     "eslint": "^9.1.1"
   }
 }

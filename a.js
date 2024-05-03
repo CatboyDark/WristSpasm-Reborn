@@ -1,7 +1,15 @@
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const fs = require('node:fs');
-const { token } = require('./auth.json');
+const { token, catboy } = require('./auth.json');
 const path = require('node:path');
+
+const mineflayer = require('mineflayer');
+const mcBot = mineflayer.createBot({ 
+	host: 'mc.hypixel.net', 
+	username: catboy,
+	auth: 'microsoft',
+	version: '1.8.9'
+})
 
 const client = new Client({ 
     intents: 
