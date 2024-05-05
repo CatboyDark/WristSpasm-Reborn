@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const commands = [];
-const foldersPath = path.join(__dirname, 'cmds');
+const foldersPath = path.join(__dirname, 'src', 'discord', 'cmds');
 const commandFolders = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
