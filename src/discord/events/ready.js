@@ -12,10 +12,11 @@ module.exports = {
 	name: Events.ClientReady,
 	async execute(client) 
 	{
-		console.log(`r`);
 
 		const channel = client.channels.cache.get(statusChannel)
 		status = await channel.send({ embeds: [dcOnline] });
+
+		console.log(`Discord is online!`);
 
 		welcome(client);
 	},
