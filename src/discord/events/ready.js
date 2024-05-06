@@ -6,7 +6,7 @@ let status;
 
 const dcOnline = new EmbedBuilder()
 	.setColor(0x00FF00)
-	.setDescription('**Discord: Online!**')
+	.setDescription('**Status: Online!**')
 
 module.exports = {
 	name: Events.ClientReady,
