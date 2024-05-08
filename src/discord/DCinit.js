@@ -1,6 +1,8 @@
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
+const { statusChannel } = require('../../config.json');
+const { EmbedBuilder } = require('discord.js');
 
 class DCinit 
 {
@@ -42,8 +44,21 @@ class DCinit
     }
 
 	login() {
-        this.client.login(this.token);
-    }
+		this.client.login(this.token);
+	
+		this.client.once('ready', () => {
+			const dcOnline = new EmbedBuilder()
+				.setColor(0x00FF00)
+				.setDescription('**Status: Online!**')
+	
+			let status;
+	
+			const channel = this.client.channels.cache.get(statusChannel);
+			status = channel.send({ embeds: [dcOnline] });
+	
+			console.log(`Discord is online!`);
+		});
+	}
 }
 
 module.exports = DCinit;
