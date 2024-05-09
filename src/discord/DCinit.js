@@ -7,8 +7,12 @@ const { EmbedBuilder } = require('discord.js');
 class DCinit 
 {
 	constructor(token) {
+
+        console.log('0')
+
         this.client = new Client({
-            intents: [
+            intents: 
+            [
                 GatewayIntentBits.Guilds,
                 GatewayIntentBits.GuildMessages,
                 GatewayIntentBits.MessageContent,
@@ -21,35 +25,47 @@ class DCinit
 
 		// Commands
 
-		const commandsPath = path.join(__dirname, 'cmds');
-        const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".js"));
+        const cDir = path.join(__dirname, 'cmds');
+        const cFiles = fs.readdirSync(cDir);
 
-        for(const file of commandFiles) {
-            const command = require(path.join(commandsPath, file));
-            this.client.commands.set(command.data.name, command);
+        for (const c of cFiles)
+        {
+            const cp = path.join(cDir, c);
+            const cf = fs.readdirSync(cp).filter(file => file.endsWith('.js'));
+            for (const f of cf)
+            {
+                const fp = path.join(cp, f);
+                const cmd = require(fp);
+                this.client.commands.set(cmd.data.name, cmd);
+            }
         }
 
 		// Events
 
-		const eventsPath = path.join(__dirname, 'events');
-        const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith(".js"));
+        const eDir = path.join(__dirname, 'events');
+        const eFiles = fs.readdirSync(eDir).filter((file) => file.endsWith(".js"));
 
-        for(const file of eventFiles) {
-            const event = require(path.join(eventsPath, file));
+        for (const e of eFiles)
+        {
+            const ep = path.join(eDir, e);
+            const event = require(ep);
             event.once
-                ? this.client.once(event.name, (...args) => event.execute(...args))
-                : this.client.on(event.name, (...args) => event.execute(...args));
+            ? this.client.once(event.name, (...args) => event.execute(...args))
+            : this.client.on(event.name, (...args) => event.execute(...args));
         }
 
 		// Features
 
-		const featuresPath = path.join(__dirname, 'features');
-        const featureFiles = fs.readdirSync(featuresPath).filter(file => file.endsWith('.js'));
+        const fDir = path.join(__dirname, 'features');
+        const fFiles = fs.readdirSync(fDir).filter(file => file.endsWith('.js'));
 
-        for (const file of featureFiles) {
-            const feature = require(path.join(featuresPath, file));
+        for (const f of fFiles)
+        {
+            const fp = path.join(fDir, f);
+            const feature = require(fp);
             feature(this.client);
         }
+
     }
 
 	login() {
