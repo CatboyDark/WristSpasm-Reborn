@@ -26,6 +26,6 @@ module.exports =
             }
         });
 
-        interaction.reply({ content: 'Restart...', ephemeral: true });
+        interaction.reply({ content: 'Restarting...', ephemeral: true });
     }
 };
