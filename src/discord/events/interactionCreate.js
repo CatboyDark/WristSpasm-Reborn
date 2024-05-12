@@ -33,7 +33,7 @@ module.exports = {
 					const roleId = data[interaction.message.embeds[0].description];
 					const role = interaction.guild.roles.cache.get(roleId);
 
-					if (roleId === 1183240686678589541)
+					if (roleId === '1183240686678589541')
 					{ if (!member.roles.cache.has(config.gmemberRole)) { return interaction.reply({ content: 'You must be a guild member to join our SMP!', ephemeral: true }); } }
 			
 					if (member.roles.cache.has(role.id)) {
