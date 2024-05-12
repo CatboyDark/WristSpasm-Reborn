@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { exec } = require('child_process');
 const CatboyDark = require('../../../../auth.json').CatboyDark;
 
@@ -6,12 +6,13 @@ module.exports =
 {
 	data: new SlashCommandBuilder()
     .setName('restart')
-	.setDescription('Restart the bot'),
+	.setDescription('Restart the bot')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
     async execute(interaction) 
 	{
-        if (interaction.user.id !== '622326625530544128') 
-        { return interaction.reply({ content: 'You do not have permission to use this command.', ephemeral: true }); }
+        if (interaction.user.id !== CatboyDark) 
+        { return interaction.reply({ content: 'Only <@CatboyDark> can use this command!', ephemeral: true }); }
 
         exec('git pull && pm2 restart discord', (error, stderr) => 
         {
@@ -23,8 +24,8 @@ module.exports =
                 console.log(`stderr: ${stderr}`);
                 return
             }
-
-            interaction.reply('Restarting...');
         });
+        
+        interaction.reply('Restarting...');
     }
 };
