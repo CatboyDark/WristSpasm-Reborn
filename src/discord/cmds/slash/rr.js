@@ -5,7 +5,7 @@ module.exports =
 {
 	data: new SlashCommandBuilder()
     .setName('rr')
-	.setDescription('Create a reaction role')
+	.setDescription('Create a reaction role message')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles)
     .addStringOption(option => option.setName('desc').setDescription('Body text').setRequired(true))
     .addStringOption(option => option.setName('button').setDescription('Button text').setRequired(true))

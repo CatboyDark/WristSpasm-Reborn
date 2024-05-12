@@ -4,7 +4,7 @@ module.exports =
 {
     data: new SlashCommandBuilder()
         .setName('purge')
-        .setDescription('Purges messages')
+        .setDescription('Purge messages')
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
 		.addIntegerOption(option => option.setName('count').setDescription('Number of messages to purge').setRequired(true))
 		.addBooleanOption(option => option.setName('bots').setDescription('Only purge bot messages').setRequired(false)),
