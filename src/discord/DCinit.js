@@ -8,8 +8,6 @@ class DCinit
 {
 	constructor(token) {
 
-        console.log('0')
-
         this.client = new Client({
             intents: 
             [
@@ -18,7 +16,9 @@ class DCinit
                 GatewayIntentBits.MessageContent,
                 GatewayIntentBits.GuildMembers
             ]
-        });
+        },
+        { partials: ['MESSAGE', 'CHANNEL', 'REACTION'] }
+    );
 
 		this.token = token;
         this.client.commands = new Collection();
@@ -71,7 +71,8 @@ class DCinit
 	login() {
 		this.client.login(this.token);
 	
-		this.client.once('ready', () => {
+		this.client.on('ready', () => 
+        {
 			const dcOnline = new EmbedBuilder()
 				.setColor(0x00FF00)
 				.setDescription('**Status: Online!**')
@@ -80,7 +81,7 @@ class DCinit
 	
 			const channel = this.client.channels.cache.get(statusChannel);
 			status = channel.send({ embeds: [dcOnline] });
-	
+
 			console.log(`Discord is online!`);
 		});
 	}
