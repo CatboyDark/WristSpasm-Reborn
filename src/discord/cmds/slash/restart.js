@@ -12,7 +12,7 @@ module.exports =
     async execute(interaction) 
 	{
         if (interaction.user.id !== CatboyDark) 
-        { return interaction.reply({ content: 'Only <@CatboyDark> can use this command!', ephemeral: true }); }
+        { return interaction.reply({ content: 'Only <@715714745876873327> can use this command!', ephemeral: true }); }
 
         exec('git pull && pm2 restart discord', (error, stderr) => 
         {
@@ -25,7 +25,7 @@ module.exports =
                 return
             }
         });
-        
+
         interaction.reply('Restarting...');
     }
 };
