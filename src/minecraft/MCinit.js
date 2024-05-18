@@ -51,7 +51,8 @@ class MCinit
 
         this.bot.on('message', message => {
             let content = message.toString().trim();
-            if (content.length < 1 || ignore.includes(content)) { return; }
+            const isIgnored = ignore.some(ignoredPhrase => content.startsWith(ignoredPhrase));
+            if (content.length < 1 || isIgnored) { return; }
             let channel = this.client.channels.cache.get(logsChannel);
             
             channel.send(`${content}`);
