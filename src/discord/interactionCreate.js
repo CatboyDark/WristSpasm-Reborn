@@ -7,9 +7,11 @@ const lFiles = fs.readdirSync(lDir).filter(file => file.endsWith('.js'));
 
 const Logic = lFiles.reduce((acc, file) => {
     const filePath = path.join(lDir, file);
-    const logicFunction = require(filePath);
+    const logicModule = require(filePath);
     const functionName = file.replace('.js', '');
-    acc[functionName] = logicFunction;
+    if (typeof logicModule === 'object' && logicModule !== null) {
+        Object.keys(logicModule).forEach(key => { acc[key] = logicModule[key]; }); } 
+	else { acc[functionName] = logicModule; }
     return acc;
 }, {});
 
@@ -34,34 +36,34 @@ module.exports = {
 		}
 		else if (interaction.isButton())
 		{
-			const buttonId = interaction.customId;
+			const buttons = interaction.customId;
 			
-			switch (buttonId) 
+			switch (buttons) 
 			{
 				case 'rr':
 					await Logic.rrLogic(interaction);
 				break;
 
 				case 'link':
-					await Logic.linkLogic(interaction);
+					await Logic.linkMsg(interaction);
 				break;
 
 				case 'linkhelp':
-					await Logic.linkhelpLogic(interaction);
+					await Logic.linkHelp(interaction);
 				break;
 			}
 		}
 		else if (interaction.isModalSubmit())
 		{
-			const modal = interaction.modalId;
+			const modals = interaction.customId
 
-			switch (modal)
+			switch (modals)
 			{
 				case 'linkM':
-					await interaction.reply({ content: 'Your submission was received successfully!' });
+					await Logic.linkLogic(interaction);
             	break;
 			}
 		}
 		else { return; }
-	},
+	}
 };

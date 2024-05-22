@@ -5,7 +5,7 @@ module.exports =
 {
 	data: new SlashCommandBuilder()
     .setName('slink')
-	.setDescription('Setup Link')
+	.setDescription('Setup Linking')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
     async execute(interaction) 
@@ -20,7 +20,7 @@ module.exports =
             '### Link your Account!\n' +
             'Please connect your Hypixel account to gain server access.\n' +
             '\n' +
-            '*If the bot is offline, please ping staff.*'
+            '*If the bot is offline, please ping a staff member.*'
         );
 
         const click = new ButtonBuilder()
