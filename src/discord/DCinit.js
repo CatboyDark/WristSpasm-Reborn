@@ -1,8 +1,9 @@
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require('fs');
+const path = require('path');
 const { statusChannel } = require('../../config.json');
 const { EmbedBuilder } = require('discord.js');
+const interactionCreate = require('./interactionCreate.js');
 
 class DCinit 
 {
@@ -40,20 +41,10 @@ class DCinit
             }
         }
 
-		// Events
-
-        const eDir = path.join(__dirname, 'events');
-        const eFiles = fs.readdirSync(eDir).filter((file) => file.endsWith(".js"));
-
-        for (const e of eFiles)
-        {
-            const ep = path.join(eDir, e);
-            const event = require(ep);
-            event.once
-            ? this.client.once(event.name, (...args) => event.execute(...args))
-            : this.client.on(event.name, (...args) => event.execute(...args));
-        }
-
+        interactionCreate.once
+        ? this.client.once(interactionCreate.name, (...args) => interactionCreate.execute(...args))
+        : this.client.on(interactionCreate.name, (...args) => interactionCreate.execute(...args));
+        
 		// Features
 
         const fDir = path.join(__dirname, 'features');

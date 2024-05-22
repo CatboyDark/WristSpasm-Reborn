@@ -6,7 +6,7 @@ module.exports =
 {
 	data: new SlashCommandBuilder()
     .setName('kill')
-	.setDescription('Kills the bot')
+	.setDescription('Kill the bot')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
     async execute(interaction) 
