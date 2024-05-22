@@ -1,5 +1,4 @@
-const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
-
+const { EmbedBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 // Link Form
 
 async function linkMsg(interaction)
@@ -26,7 +25,7 @@ async function linkMsg(interaction)
 async function linkHelp(interaction)
 {
     const embed = new EmbedBuilder()
-        .setColor('#0000FF')
+        .setColor('#03A9F4')
         .setTitle('How to Link Your Account')
         .setDescription(
             '1. Connect to __mc.hypixel.net__.\n' +

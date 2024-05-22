@@ -1,0 +1,13 @@
+Colors Used
+
+Black: 
+000000
+
+Green: 
+00FF00
+
+Red: 
+FF0000
+
+Light Blue: 
+4BB543

@@ -31,7 +31,8 @@ module.exports =
     
         let data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json')) : {};
         data[interaction.options.getString('desc')] = role.id;
-        fs.writeFileSync('data.json', JSON.stringify(data));
+        let formattedData = JSON.stringify(data, null, 4).replace(/}\n\s*{/g, '},\n');
+        fs.writeFileSync('data.json', formattedData);
 
         const click = new ButtonBuilder()
         .setCustomId('rr')

@@ -1,5 +1,5 @@
 const { ActionRowBuilder, SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
-const CatboyDark = require('../../../../auth.json').CatboyDark;
+const { CatboyDark } = require('../../../../auth.json');
 
 module.exports =
 {
@@ -20,7 +20,7 @@ module.exports =
             '### Link your Account!\n' +
             'Please connect your Hypixel account to gain server access.\n' +
             '\n' +
-            '*If the bot is offline, please ping a staff member.*'
+            '*Please ping a staff member if the bot is down or you require further assistance.*'
         );
 
         const click = new ButtonBuilder()

@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { statusChannel } = require('../../config.json');
 const { EmbedBuilder } = require('discord.js');
-const interactionCreate = require('./interactionCreate.js');
+const interaction = require('./interactions.js');
 
 class DCinit 
 {
@@ -41,9 +41,9 @@ class DCinit
             }
         }
 
-        interactionCreate.once
-        ? this.client.once(interactionCreate.name, (...args) => interactionCreate.execute(...args))
-        : this.client.on(interactionCreate.name, (...args) => interactionCreate.execute(...args));
+        interaction.once
+        ? this.client.once(interaction.name, (...args) => interaction.execute(...args))
+        : this.client.on(interaction.name, (...args) => interaction.execute(...args));
         
 		// Features
 

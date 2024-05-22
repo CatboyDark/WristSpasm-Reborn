@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { exec } = require('child_process');
-const CatboyDark = require('../../../../auth.json').CatboyDark;
+const { CatboyDark } = require('../../../../auth.json');
 
 module.exports = 
 {
