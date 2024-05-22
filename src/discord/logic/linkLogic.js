@@ -1,4 +1,7 @@
 const { EmbedBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+const hypixelRebornAPI = require("../../contracts/HAPI");
+const { gmemberRole, welcomeRole } = require('../../../config.json');
+
 // Link Form
 
 async function linkMsg(interaction)
@@ -43,7 +46,27 @@ async function linkHelp(interaction)
 
 async function linkLogic(interaction)
 {
-    await interaction.reply({ content: 'Your submission was received successfully!', ephemeral: true });
+    const ign = interaction.fields.getTextInputValue('linkI')
+    hypixelRebornAPI.getPlayer(ign).then((player) => 
+    {
+        const member = interaction.guild.members.cache.get(interaction.user.id);
+        const discord = player.socialMedia.find((media) => media.id === "DISCORD")?.link;
+        const gmember = member.roles.cache.has(gmemberRole)
+        const non = member.roles.cache.has(welcomeRole)
+
+        if (interaction.user.tag === discord) {
+            member.setNickname(player.nickname);
+            if (!gmember) { member.roles.add(gmemberRole); } 
+            if (non) { member.roles.remove(welcomeRole); }
+            interaction.reply({ content: `everything works!`, ephemeral: true });
+        } else {
+            console.log(`Discord ${interaction.user.tag} =/= IGN ${discord}`);
+            interaction.reply({ content: `Your Discord does not match.`, ephemeral: true });
+        }
+    })
+    .catch((e) => {
+        { console.error(e); }
+    });
 }
 
 module.exports = { linkMsg, linkHelp, linkLogic };
