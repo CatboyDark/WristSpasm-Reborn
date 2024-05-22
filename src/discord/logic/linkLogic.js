@@ -1,6 +1,6 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 
-// Link Message
+// Link Form
 
 async function linkMsg(interaction)
 {
