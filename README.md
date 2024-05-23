@@ -15,7 +15,7 @@ Created by CatboyDark on Apr 29, 2024. <br /> <br />
 
 <div align="center">
 
-<h1>Credits</h1><br>
+<h2>Credits</h2><br>
 <div align="center">
   
 Based on the [WristSpasm-Discord-Bot](https://github.com/Wristspasm/Wristspasm-Discord-Bot)
