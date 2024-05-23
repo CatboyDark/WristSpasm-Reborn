@@ -5,8 +5,7 @@ const fs = require('fs');
 
 // Link Form
 
-async function linkMsg(interaction)
-{
+async function linkMsg(interaction) {
     const modal = new ModalBuilder()
         .setCustomId('linkM')
         .setTitle('Link your account!');
@@ -26,8 +25,7 @@ async function linkMsg(interaction)
 
 // Link Help Message
 
-async function linkHelp(interaction)
-{
+async function linkHelp(interaction) {
     const embed = new EmbedBuilder()
         .setColor('#03A9F4')
         .setTitle('How to Link Your Account')
@@ -45,21 +43,19 @@ async function linkHelp(interaction)
 
 // Link Logic
 
-async function linkLogic(interaction)
-{
+async function linkLogic(interaction) {
     const ign = interaction.fields.getTextInputValue('linkI')
-    hypixelRebornAPI.getPlayer(ign).then((player) => 
-    {
+    hypixelRebornAPI.getPlayer(ign).then((player) => {
         const member = interaction.guild.members.cache.get(interaction.user.id);
         const discord = player.socialMedia.find((media) => media.id === "DISCORD")?.link;
         const gmember = member.roles.cache.has(gmemberRole)
         const non = member.roles.cache.has(welcomeRole)
 
         if (interaction.user.tag === discord) {
-            member.setNickname(player.nickname);
-            if (!gmember) { member.roles.add(gmemberRole); } 
-            if (non) { member.roles.remove(welcomeRole); }
-            
+            member.setNickname(player.nickname).catch(e => console.error(`Failed to set nickname: ${e.message}`));
+            if (!gmember) { member.roles.add(gmemberRole).catch(e => console.error(`Failed to add role: ${e.message}`)); }
+            if (non) { member.roles.remove(welcomeRole).catch(e => console.error(`Failed to remove role: ${e.message}`)); }
+
             let data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json', 'utf8')) : {};
             let linked = data['Linked'] || {};
             linked[interaction.user.id] = player.nickname;
@@ -67,14 +63,12 @@ async function linkLogic(interaction)
             let formattedData = JSON.stringify(data, null, 4);
             fs.writeFileSync('data.json', formattedData);
             interaction.reply({ content: `You have successfully verified.`, ephemeral: true });
-        } else {
+        }
+        else {
             console.log(`Discord ${interaction.user.tag} =/= IGN ${discord}`);
-            interaction.reply({ content: `Your Discord does not match.`, ephemeral: true });
+            interaction.reply({ content: `Link Failed. Your Discord does not match.`, ephemeral: true });
         }
     })
-    .catch((e) => {
-        { console.error(e); }
-    });
 }
 
 module.exports = { linkMsg, linkHelp, linkLogic };
