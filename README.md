@@ -1,5 +1,5 @@
 <p align="center" width="100%">
-    <img width="400" height="400" src="https://github.com/CatboyDark/WristSpasm-Reborn/blob/main/assets/wristspazm.png">
+    <img width="350" height="350" src="https://github.com/CatboyDark/WristSpasm-Reborn/blob/main/assets/wristspazm.png">
 </p>
 
 <h1 align="center">The Official WristSpasm Bot</h1>
