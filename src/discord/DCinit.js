@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const { statusChannel } = require('../../config.json');
 const { EmbedBuilder } = require('discord.js');
-const interaction = require('./interactions.js');
 
 class DCinit 
 {
@@ -41,9 +40,21 @@ class DCinit
             }
         }
 
-        interaction.once
-        ? this.client.once(interaction.name, (...args) => interaction.execute(...args))
-        : this.client.on(interaction.name, (...args) => interaction.execute(...args));
+        // Events
+
+        const eDir = path.join(__dirname, 'events');
+        const eFiles = fs.readdirSync(eDir).filter(file => file.endsWith('.js'));
+
+        for (const e of eFiles) 
+        {
+            const ep = path.join(eDir, e);
+            const event = require(ep);
+            if (event.once) {
+                this.client.once(event.name, (...args) => event.execute(...args));
+            } else {
+                this.client.on(event.name, (...args) => event.execute(...args));
+            }
+        }
         
 		// Features
 

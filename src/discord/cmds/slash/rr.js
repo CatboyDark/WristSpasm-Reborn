@@ -28,11 +28,6 @@ module.exports =
         const desc = new EmbedBuilder()
         .setColor('#' + color)
         .setDescription(interaction.options.getString('desc'));
-    
-        let data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json')) : {};
-        data[interaction.options.getString('desc')] = role.id;
-        let formattedData = JSON.stringify(data, null, 4).replace(/}\n\s*{/g, '},\n');
-        fs.writeFileSync('data.json', formattedData);
 
         const click = new ButtonBuilder()
         .setCustomId('rr')
@@ -41,7 +36,20 @@ module.exports =
 
         const row = new ActionRowBuilder().addComponents( click );
 
-        await interaction.channel.send({ embeds: [desc], components: [row] });
+        const msg = await interaction.channel.send({ embeds: [desc], components: [row] });
+
+        // JSON Formatter
+
+        let data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json', 'utf8')) : {};
+        let reactionRoles = data['Reaction Roles'] || {};
+        reactionRoles[interaction.options.getString('desc')] = {
+        messageId: msg.id,
+        roleId: role.id
+        };
+
+        data['Reaction Roles'] = reactionRoles;
+        let formattedData = JSON.stringify(data, null, 4);
+        fs.writeFileSync('data.json', formattedData);
 
         interaction.reply({ content: 'Success!', ephemeral: true });
     }

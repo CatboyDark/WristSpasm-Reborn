@@ -3,8 +3,11 @@ const fs = require('fs');
 module.exports = async (interaction) => 
 {
     const member = interaction.guild.members.cache.get(interaction.user.id);
-    const data = JSON.parse(fs.readFileSync('data.json'));
-    const roleId = data[interaction.message.embeds[0].description];
+    const data = JSON.parse(fs.readFileSync('data.json', 'utf8'));
+    const description = interaction.message.embeds[0].description;
+
+    const rr = data['Reaction Roles'][description];
+    const roleId = rr.roleId;
     const role = interaction.guild.roles.cache.get(roleId);
 
     // Require GUILD MEMBER role:

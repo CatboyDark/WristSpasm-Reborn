@@ -9,5 +9,8 @@ Green:
 Red: 
 FF0000
 
+Purple:
+FF00FF
+
 Light Blue: 
 4BB543

@@ -17,15 +17,15 @@ module.exports =
         .setColor('#00FF00')
         .setDescription
         (
-            '### Link your Account!\n' +
-            'Please connect your Hypixel account to gain server access.\n' +
+            '### <:greencheck:1242984422870093824> Link your Account!\n' +
+            'Connect your Hypixel account to gain server access.\n' +
             '\n' +
-            '*Please ping a staff member if the bot is down or you require further assistance.*'
+            '*Please ping a staff member if the bot is down or if you require further assistance.*'
         );
 
         const click = new ButtonBuilder()
         .setCustomId('link')
-		.setLabel('Meow!')
+		.setLabel('Link')
 		.setStyle(ButtonStyle.Success);
 
         const help = new ButtonBuilder()

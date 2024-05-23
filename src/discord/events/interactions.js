@@ -1,8 +1,8 @@
 const { Events } = require('discord.js');
-
 const fs = require('fs');
 const path = require('path');
-const lDir = path.join(__dirname, 'logic');
+
+const lDir = path.join(__dirname, '../logic');
 const lFiles = fs.readdirSync(lDir).filter(file => file.endsWith('.js'));
 
 const Logic = lFiles.reduce((acc, file) => {

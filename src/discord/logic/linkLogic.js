@@ -1,6 +1,7 @@
 const { EmbedBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const hypixelRebornAPI = require("../../contracts/HAPI");
 const { gmemberRole, welcomeRole } = require('../../../config.json');
+const fs = require('fs');
 
 // Link Form
 
@@ -58,7 +59,14 @@ async function linkLogic(interaction)
             member.setNickname(player.nickname);
             if (!gmember) { member.roles.add(gmemberRole); } 
             if (non) { member.roles.remove(welcomeRole); }
-            interaction.reply({ content: `everything works!`, ephemeral: true });
+            
+            let data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json', 'utf8')) : {};
+            let linked = data['Linked'] || {};
+            linked[interaction.user.id] = player.nickname;
+            data['Linked'] = linked;
+            let formattedData = JSON.stringify(data, null, 4);
+            fs.writeFileSync('data.json', formattedData);
+            interaction.reply({ content: `You have successfully verified.`, ephemeral: true });
         } else {
             console.log(`Discord ${interaction.user.tag} =/= IGN ${discord}`);
             interaction.reply({ content: `Your Discord does not match.`, ephemeral: true });
