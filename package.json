@@ -10,10 +10,11 @@
     "discord.js": "^14.14.1",
     "git": "^0.1.5",
     "hypixel-api-reborn": "^11.2.0",
-    "mineflayer": "^4.20.1",
-    "pm2": "^5.3.1"
+    "mineflayer": "^4.20.1"
   },
   "devDependencies": {
-    "eslint": "^9.1.1"
+    "@eslint/js": "^9.3.0",
+    "eslint": "^9.3.0",
+    "globals": "^15.3.0"
   }
 }

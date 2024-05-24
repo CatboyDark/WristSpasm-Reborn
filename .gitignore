@@ -1,4 +1,6 @@
 node_modules
+eslint.config.js
 auth.json
 config.json
 data.json
+ignore.json

@@ -2,44 +2,33 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('disc
 
 module.exports = 
 {
-    data: new SlashCommandBuilder()
-        .setName('purge')
-        .setDescription('Purge messages')
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
-		.addIntegerOption(option => option.setName('count').setDescription('Number of messages to purge').setRequired(true))
-		.addBooleanOption(option => option.setName('bots').setDescription('Only purge bot messages').setRequired(false)),
+	data: new SlashCommandBuilder()
+		.setName('purge')
+		.setDescription('Purge messages')
+		.addIntegerOption(option => option.setName('count').setDescription('Number of messages').setRequired(true))
+		.addBooleanOption(option => option.setName('bots').setDescription('Only purge bot messages').setRequired(false))
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
 
-        async execute(interaction) 
-        {
-            const count = interaction.options.getInteger('count');
-            const messages = await interaction.channel.messages.fetch({ limit: count });
-            const botMsgs = messages.filter(msg => msg.author.bot);
+	async execute(interaction) 
+	{
+		const count = interaction.options.getInteger('count');
+		const msgs = await interaction.channel.messages.fetch({ limit: count });
+		const botMsgs = msgs.filter(msg => msg.author.bot);
 
-            const purgeSuccess = new EmbedBuilder()
-            .setColor(0x00FF00)
-            .setDescription(`Deleted ${count} messages.`)
-        
-            const purgeLimit = new EmbedBuilder()
-            .setColor(0xFF0000)
-            .setDescription('You can only purge up to 100 messages.')
+		const purgeLimit = new EmbedBuilder().setColor('FF0000').setDescription('**You can only purge up to 100 messages.**');
+		const purgeSuccess = new EmbedBuilder().setColor('00FF00').setDescription(`**Deleted ${count} messages.**`);
+		const botPurgeSuccess = new EmbedBuilder().setColor('00FF00').setDescription(`**Deleted ${count} bot messages.**`);
 
-            const botPurgeSuccess = new EmbedBuilder()
-            .setColor(0x00FF00)
-            .setDescription(`Deleted ${count} bot messages.`)
+		if (count > 100) { await interaction.reply({ embeds: [purgeLimit], ephemeral: true }); }
 
-            if (count > 100) { 
-                await interaction.reply({ embeds: [purgeLimit], ephemeral: true });
-                return;
-            }
-
-            if (!interaction.options.getBoolean('bots'))
-            {   
-                await interaction.channel.bulkDelete(count)
-                .then(() => interaction.reply({ embeds: [purgeSuccess], ephemeral: true }))
-            } 
-            else {
-                await interaction.channel.bulkDelete(botMsgs)
-                .then(() => interaction.reply({ embeds: [botPurgeSuccess], ephemeral: true }))
-            }
-        }
-}
+		if (!interaction.options.getBoolean('bots'))
+		{   
+			await interaction.channel.bulkDelete(msgs);
+			await interaction.reply({ embeds: [purgeSuccess], ephemeral: true });
+		} 
+		else {
+			await interaction.channel.bulkDelete(botMsgs);
+			await interaction.reply({ embeds: [botPurgeSuccess], ephemeral: true });
+		}
+	}
+};

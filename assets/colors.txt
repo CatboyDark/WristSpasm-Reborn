@@ -12,5 +12,5 @@ FF0000
 Purple:
 FF00FF
 
-Light Blue: 
-4BB543
+Sky Blue:
+03A9F4
