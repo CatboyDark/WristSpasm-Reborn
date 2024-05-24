@@ -6,6 +6,9 @@
   "license": "MIT",
   "homepage": "https://github.com/CatboyDark/WristSpasm-Reborn",
   "main": "a.js",
+  "scripts":{
+    "lint": "eslint --fix src"
+  },
   "dependencies": {
     "discord.js": "^14.14.1",
     "git": "^0.1.5",

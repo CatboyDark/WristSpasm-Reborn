@@ -6,29 +6,59 @@ module.exports =
 		.setName('purge')
 		.setDescription('Purge messages')
 		.addIntegerOption(option => option.setName('count').setDescription('Number of messages').setRequired(true))
-		.addBooleanOption(option => option.setName('bots').setDescription('Only purge bot messages').setRequired(false))
+		.addStringOption(option => option.setName('filter').setDescription('Purge user OR bot messages').addChoices(
+			{ name: 'Bot messages', value: 'bot'},
+			{ name: 'User messages', value: 'user'}
+		).setRequired(false))
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
 
 	async execute(interaction) 
 	{
-		const count = interaction.options.getInteger('count');
-		const msgs = await interaction.channel.messages.fetch({ limit: count });
-		const botMsgs = msgs.filter(msg => msg.author.bot);
-
 		const purgeLimit = new EmbedBuilder().setColor('FF0000').setDescription('**You can only purge up to 100 messages.**');
-		const purgeSuccess = new EmbedBuilder().setColor('00FF00').setDescription(`**Deleted ${count} messages.**`);
-		const botPurgeSuccess = new EmbedBuilder().setColor('00FF00').setDescription(`**Deleted ${count} bot messages.**`);
+		const purgeAgeLimit = new EmbedBuilder().setColor('FF0000').setDescription('**You cannot purge messages older than 14 days.**');
+        
+		const filter = interaction.options.getString('filter');
+        
+		const count = interaction.options.getInteger('count');
+		if (count > 100) { await interaction.reply({ embeds: [purgeLimit], ephemeral: true }); return; }
+		let msg = await interaction.channel.messages.fetch({ limit: count });
 
-		if (count > 100) { await interaction.reply({ embeds: [purgeLimit], ephemeral: true }); }
+		let success;
+		if (msg.size === 1)
+		{ success = new EmbedBuilder().setColor('00FF00').setDescription('**Deleted a message.**'); }
+		else
+		{ 
+			const f = filter === 'user' ? 'user' : (filter === 'bot' ? 'bot' : '');
+			success = new EmbedBuilder().setColor('00FF00').setDescription(`**Deleted ${msg.size} ${f} messages.**`);
+		}
 
-		if (!interaction.options.getBoolean('bots'))
-		{   
-			await interaction.channel.bulkDelete(msgs);
-			await interaction.reply({ embeds: [purgeSuccess], ephemeral: true });
-		} 
-		else {
-			await interaction.channel.bulkDelete(botMsgs);
-			await interaction.reply({ embeds: [botPurgeSuccess], ephemeral: true });
+		if (filter === 'user') 
+		{ 
+			msg = msg.filter(msg => !msg.author.bot);
+
+			await interaction.channel.bulkDelete(msg)
+				.then(() => interaction.reply({ embeds: [success], ephemeral: true }))
+				.catch(error => {
+					if (error.code === 50034) { interaction.reply({ embeds: [purgeAgeLimit], ephemeral: true }); }
+				});
+		}
+		else if (filter === 'bot') 
+		{ 
+			msg = msg.filter(msg => msg.author.bot);
+
+			await interaction.channel.bulkDelete(msg)
+				.then(() => interaction.reply({ embeds: [success], ephemeral: true }))
+				.catch(error => {
+					if (error.code === 50034) { interaction.reply({ embeds: [purgeAgeLimit], ephemeral: true }); }
+				});
+		}
+		else
+		{
+			await interaction.channel.bulkDelete(msg)
+				.then(() => interaction.reply({ embeds: [success], ephemeral: true }))
+				.catch(error => {
+					if (error.code === 50034) { interaction.reply({ embeds: [purgeAgeLimit], ephemeral: true }); }
+				});
 		}
 	}
 };
