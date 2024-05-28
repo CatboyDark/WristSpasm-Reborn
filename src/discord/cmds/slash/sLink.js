@@ -15,7 +15,7 @@ module.exports =
 			.setColor('00FF00')
 			.setDescription
 			(
-				'### <:greencheck:1242984422870093824> Link your Account!\n' +
+				'### <:gcheck:1244687091162415176> Link your Account!\n' +
                 'Connect your Hypixel account to gain server access.\n' +
                 '\n' +
                 '*Please ping a staff member if the bot is down or if you require further assistance.*'

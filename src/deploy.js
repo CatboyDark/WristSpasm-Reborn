@@ -1,12 +1,10 @@
 const { REST, Routes } = require('discord.js');
-const { clientId, token } = require('./auth.json');
+const { clientId, token } = require('../auth.json');
 const fs = require('fs');
 const path = require('path');
 
 // Read command files
-
-const readCommandFiles = (commandsPath) => 
-{
+const readCommandFiles = (commandsPath) => {
 	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 	return commandFiles.map(file => {
 		const filePath = path.join(commandsPath, file);
@@ -15,15 +13,13 @@ const readCommandFiles = (commandsPath) =>
 			return command.data.toJSON();
 		} else {
 			console.warn(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-			return null;
+			return;
 		}
 	}).filter(Boolean);
 };
 
 // Collect all commands
-
-const collectCommands = (foldersPath) => 
-{
+const collectCommands = (foldersPath) => {
 	const commandFolders = fs.readdirSync(foldersPath);
 	return commandFolders.flatMap(folder => {
 		const commandsPath = path.join(foldersPath, folder);
@@ -31,18 +27,21 @@ const collectCommands = (foldersPath) =>
 	});
 };
 
-(async () => 
-{
+// Deploy commands
+const deploy = async () => {
 	try {
-		const foldersPath = path.join(__dirname, 'src', 'discord', 'cmds');
+		const foldersPath = path.join(__dirname, 'discord', 'cmds');
 		const commands = collectCommands(foldersPath);
+
+		// console.log('Collected commands:', commands);
 
 		const rest = new REST({ version: '10' }).setToken(token);
 		await rest.put(Routes.applicationCommands(clientId), { body: commands });
 
 		console.log(`Successfully reloaded ${commands.length} commands!`);
-	} 
-	catch (error) {
+	} catch (error) {
 		console.error('Error:', error);
 	}
-})();
+};
+
+module.exports = deploy;

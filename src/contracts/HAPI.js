@@ -1,8 +1,8 @@
-const HypixelAPIReborn = require('hypixel-api-reborn');
+const { Client } = require('hypixel-api-reborn');
 const { HAPI } = require('../../auth.json');
 
-const hypixel = new HypixelAPIReborn.Client(HAPI, {
+const client = new Client(HAPI, {
 	cache: true,
 });
 
-module.exports = hypixel;
+module.exports = client;

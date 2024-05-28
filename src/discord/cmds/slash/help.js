@@ -3,7 +3,8 @@ const { staffRole } = require('../../../../config.json');
 
 const nonC =
 [
-	'help'
+	'help',
+	'roles',
 ];
 
 const staffC =
