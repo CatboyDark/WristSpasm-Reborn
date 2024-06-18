@@ -12,10 +12,10 @@ const a = async () =>
 	await MC.login();
 };
 
-const main = async () => 
+const deployCommands = async () => 
 {
 	await deploy();
 	await a();
 };
 
-main().catch(console.error);
+deployCommands();

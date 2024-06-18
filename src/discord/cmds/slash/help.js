@@ -13,6 +13,7 @@ const staffC =
 	'role',
 	'rr',
 	'slink',
+	'sservers'
 ];
 
 module.exports = 
@@ -40,18 +41,19 @@ module.exports =
 			.setThumbnail('https://i.imgur.com/uwqAaeb.png')
 			.setTitle('WristSpasm')
 			.addFields(
-				{ name: '**Commands**', value: `${cList}` },
+				{ name: '**Commands**', value: `${cList}` + '\n_ _'},
 				{
-					name: '**Credits**', value:
-						`✦ <@1165302964093722697>
-					✦ <@486155512568741900>
-					✦ <@1169174913832202306>`
+					name: '\n**Credits**', 
+					value: '✦ <@1165302964093722697> ✦ <@486155512568741900> ✦ <@1169174913832202306> ✦\n' +
+					'_ _\n**Bugs and Support**\n' +
+					'[Github](https://github.com/CatboyDark/WristSpasm-Reborn)' + '\n\nPlease contact <@622326625530544128> if something breaks.'
 				}
 			)
 			.setFooter({
 				text: 'Created by @CatboyDark',
 				iconURL: 'https://i.imgur.com/4lpd01s.png'
-			});
+			}
+			);
 
 		await interaction.reply({ embeds: [info] });
 	},

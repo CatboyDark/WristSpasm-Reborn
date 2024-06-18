@@ -37,7 +37,7 @@ class MCinit
 			const botSocket = this.bot._client.socket;
 			console.log(`${this.instance.username} has joined ${botSocket.server ? botSocket.server : botSocket._host}.`);
 
-			this.bot.chat('/w CatboyDark meow');
+			this.bot.chat('/w PuppyboyDark meow');
 			this.limbo();
 		});
 

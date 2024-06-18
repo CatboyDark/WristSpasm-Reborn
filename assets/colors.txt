@@ -14,3 +14,6 @@ FF00FF
 
 Sky Blue:
 03A9F4
+
+Orange:
+FFA500

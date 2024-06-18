@@ -1,0 +1,5 @@
+Before Public Use:
+- ws assets
+- help command
+- kill and restart command exec 'wsr'
+- toggleable and customizeable welcome msg/role
