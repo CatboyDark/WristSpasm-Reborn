@@ -55,11 +55,7 @@ async function linkLogic(interaction)
 	if (e.link(interaction, player)) return;
 	const discord = player.socialMedia.find(media => media.id === 'DISCORD')?.link;
 
-	let nickErr = false;
-	try { await member.setNickname(player.nickname); } catch (error) {
-		
-		nickErr = true;
-	}
+	await member.setNickname(player.nickname);
 
 	member.roles.add(linkedRole);
 	if (non) { member.roles.remove(welcomeRole); }
@@ -86,7 +82,6 @@ async function linkLogic(interaction)
 	fs.writeFileSync('data.json', JSON.stringify(data, null, 4));
 
  	interaction.reply({ embeds: [success], ephemeral: true });
-	if (nickErr) { interaction.followUp({ embeds: [e.nickPerms.embed], ephemeral: true });}
 }
 
 module.exports = { linkMsg, linkHelpMsg, linkLogic };

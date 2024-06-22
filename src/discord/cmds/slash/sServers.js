@@ -78,6 +78,5 @@ module.exports =
 		await interaction.channel.send({ embeds: [farming], components: [rFarming] });
 
 		await interaction.reply({ embeds: [success], ephemeral: true });
-		return;
 	}
 };

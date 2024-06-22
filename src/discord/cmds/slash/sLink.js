@@ -29,6 +29,5 @@ module.exports =
 		await interaction.channel.send({ embeds: [info], components: [row] });
 
 		await interaction.reply({ embeds: [success], ephemeral: true });
-		return;
 	}
 };

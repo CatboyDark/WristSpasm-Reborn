@@ -44,6 +44,8 @@ module.exports = {
 				await Logic.linkHelpMsg(interaction);
 				break;
 
+			// sServers
+			
 			case 'sbz':
 				await Logic.sbz(interaction);
 				break;
@@ -144,6 +146,16 @@ module.exports = {
 
 			case 'elitef':
 				await Logic.elitef(interaction);
+				break;
+
+			// sEvents
+
+			case 'eventA':
+				await Logic.eventA(interaction);
+				break;
+
+			case 'eventA_start':
+				await Logic.eventA_start(interaction);
 				break;
 			}
 		}

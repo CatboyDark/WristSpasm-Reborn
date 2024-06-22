@@ -1,11 +1,14 @@
 const mineflayer = require('mineflayer');
-const fs = require('node:fs');
+const path = require('path');
+const fs = require('fs');
 const { logsChannel } = require('../../config.json');
 const { ign } = require('../../auth.json');
 const ignore = JSON.parse(fs.readFileSync('ignore.json'));
+const { bridge } = require('../../data.json');
 
 class MCinit
 {
+
 	constructor(client) 
 	{
 		this.instance = {
@@ -18,6 +21,18 @@ class MCinit
 		};
 		this.bot = mineflayer.createBot(this.instance);
 		this.client = client;
+	}
+
+	loadFeatures()
+	{
+		const fDir = path.join(__dirname, 'features');
+		const fFiles = fs.readdirSync(fDir).filter(file => file.endsWith('.js'));
+
+		for (const f of fFiles) {
+			const fp = path.join(fDir, f);
+			const feature = require(fp);
+			feature(this.client);
+		}
 	}
 
 	limbo()
@@ -50,6 +65,8 @@ class MCinit
 		});
 
 		this.bot.on('message', message => {
+			if (!bridge) { return; }
+			
 			const content = message.toString().trim();
 			const isIgnored = ignore.some(ignoredPhrase => content.startsWith(ignoredPhrase));
 			if (content.length < 1 || isIgnored) { return; }
