@@ -4,6 +4,7 @@ const fs = require('fs');
 module.exports = 
 {
 	name: Events.MessageDelete,
+	
 	async execute(deletedMessage)
 	{
 		const data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json', 'utf8')) : {};
@@ -15,10 +16,8 @@ module.exports =
 				if (value.messageId === deletedMessage.id) {
 					delete data['Reaction Roles'][key];
 					found = true;
-					break;
-				}
-			}
-
+					break; 
+				}}
 			if (found) {
 				const formattedData = JSON.stringify(data, null, 4);
 				fs.writeFileSync('data.json', formattedData);

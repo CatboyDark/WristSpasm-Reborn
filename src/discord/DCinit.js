@@ -15,14 +15,14 @@ class DCinit
             	GatewayIntentBits.MessageContent,
             	GatewayIntentBits.GuildMembers
             ]
-		},
-		{ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] }
-		);
+		});
 
 		this.token = token;
-		this.client.commands = new Collection();
 
 		// Commands
+
+		this.client.pc = new Collection();
+		this.client.sc = new Collection();
 
 		const cDir = path.join(__dirname, 'cmds');
 		const cFiles = fs.readdirSync(cDir);
@@ -35,7 +35,10 @@ class DCinit
 			{
 				const fp = path.join(cp, f);
 				const cmd = require(fp);
-				this.client.commands.set(cmd.data.name, cmd);
+				this.client.pc.set(cmd.name || cmd.data.name, cmd);
+				if (cmd.type === 'slash') {
+					this.client.sc.set(cmd.data.name, cmd);
+				}
 			}
 		}
 

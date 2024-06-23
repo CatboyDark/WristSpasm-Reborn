@@ -3,6 +3,7 @@ const e = require('../../../e.js');
 
 module.exports =
 {
+	type: 'slash',
 	data: new SlashCommandBuilder()
 		.setName('role')
 		.setDescription('Add or remove a user\'s roles')

@@ -4,6 +4,7 @@ const e = require('../../../e.js');
 
 module.exports =
 {
+	type: 'slash',
 	data: new SlashCommandBuilder()
 		.setName('rr')
 		.setDescription('Create a reaction role message')

@@ -4,6 +4,7 @@ const e = require('../../../e');
 
 module.exports = 
 {
+	type: 'slash',
 	data: new SlashCommandBuilder()
 	    .setName('kill')
 	    .setDescription('Kill the bot')

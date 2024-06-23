@@ -3,7 +3,9 @@ const fs = require('fs');
 const { linkedRole, gRole } = require('../../../../config.json');
 const hypixel = require('../../../contracts/hapi.js');
 
-module.exports = {
+module.exports = 
+{
+	type: 'slash',
 	data: new SlashCommandBuilder()
 		.setName('roles')
 		.setDescription('Update your roles'),

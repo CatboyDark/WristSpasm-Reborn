@@ -2,6 +2,7 @@ const { ActionRowBuilder, SlashCommandBuilder, EmbedBuilder, ButtonBuilder, Butt
 
 module.exports =
 {
+	type: 'slash',
 	data: new SlashCommandBuilder()
 		.setName('slink')
 		.setDescription('Setup Linking Channel')

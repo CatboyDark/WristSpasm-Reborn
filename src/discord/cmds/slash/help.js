@@ -13,11 +13,13 @@ const staffC =
 	'role',
 	'rr',
 	'slink',
-	'sservers'
+	'sservers',
+	'ssevent'
 ];
 
 module.exports = 
 {
+	type: 'slash',
 	data: new SlashCommandBuilder()
 		.setName('help')
 		.setDescription('Show bot info'),

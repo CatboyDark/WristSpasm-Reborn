@@ -2,6 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, Butt
 
 module.exports =
 {
+	type: 'slash',
 	data: new SlashCommandBuilder()
 		.setName('sevent')
 		.setDescription('Setup Event')
