@@ -24,7 +24,7 @@ const cmdErrors = (interaction) =>
 
 const notCatboy = (interaction) => 
 {
-	const notCatboy = new EmbedBuilder().setColor('FF0000').setDescription('**Only <@622326625530544128> or <@448912690329419776> can use this command!**');
+	const notCatboy = new EmbedBuilder().setColor('FF0000').setDescription('**Only <@622326625530544128> can use this command!**'); 
 
 	if (interaction.user.id !== CatboyDark) {
 		interaction.reply({ embeds: [notCatboy] });
@@ -37,7 +37,7 @@ const notRaccn = (interaction) =>
 {
 	const notRaccn = new EmbedBuilder().setColor('FF0000').setDescription('**Only <@622326625530544128> or <@448912690329419776> can use this command!**');
 
-	if (interaction.user.id !== SoupyRaccn) {
+	if (interaction.user.id !== SoupyRaccn && interaction.user.id !== CatboyDark) {
 		interaction.reply({ embeds: [notRaccn] });
 		return true;
 	}

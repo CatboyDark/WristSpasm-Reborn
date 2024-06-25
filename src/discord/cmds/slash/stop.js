@@ -12,7 +12,7 @@ module.exports =
 
 	async execute(interaction) 
 	{
-		if (e.notCatboy(interaction) && e.notRaccn(interaction)) { return; }
+		if (e.notRaccn(interaction)) { return; }
 
 		const stop = new EmbedBuilder().setColor('000000').setDescription('**Stopping...**');
 
