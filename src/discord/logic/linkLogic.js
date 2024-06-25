@@ -1,6 +1,6 @@
 const { EmbedBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const fs = require('fs');
-const { gRole, welcomeRole, linkedRole } = require('../../../config.json');
+const { roles: { welcomeRole, linkedRole } } = require('../../../config.json');
 const e = require('../../e.js');
 const hypixel = require('../../contracts/hapi.js');
 

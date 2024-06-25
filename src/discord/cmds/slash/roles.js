@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
-const { linkedRole, gRole } = require('../../../../config.json');
+const { roles: { linkedRole, gRole } } = require('../../../../config.json');
 const hypixel = require('../../../contracts/hapi.js');
 
 module.exports = 

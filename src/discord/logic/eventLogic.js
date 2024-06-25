@@ -34,14 +34,12 @@ async function eventA_start(interaction)
 		rows.push(new ActionRowBuilder());
 	}
 
-	// Create 25 buttons
 	for (let i = 0; i < 25; i++) {
 		const button = new ButtonBuilder()
 			.setCustomId('button' + i)
 			.setLabel('🐱')
 			.setStyle(ButtonStyle.Success);
 
-		// Add the button to the appropriate action row
 		rows[Math.floor(i / 5)].addComponents(button);
 	}
 
@@ -61,7 +59,6 @@ async function eventA_start(interaction)
 
 	collector.on('end', async collected => {
 		console.log(`Collected ${collected.size} interactions.`);
-		// Update the message to show where the prize was
 		rows.forEach(row => {
 			row.components.forEach(button => {
 				if (button.data.custom_id === prize1) {

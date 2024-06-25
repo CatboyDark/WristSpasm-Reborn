@@ -1,11 +1,10 @@
-module.exports = function(bot) 
+module.exports = async (bot) =>
 {
-	const spamInterval = setInterval(() => {bot.chat('/');}, 250);
+    const limbo = setInterval(() => { bot.chat('/'); }, 250);
 
-	bot.on('message', (message) => 
-	{
-		if (message.toString().includes('disconnect.spam')) {
-			clearInterval(spamInterval);
-		}
-	});
+    bot.on('message', (message) => 
+    {
+        if (message.toString().includes('disconnect.spam')) 
+        { clearInterval(limbo); }
+    });
 };

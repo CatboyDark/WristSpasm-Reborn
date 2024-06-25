@@ -1,7 +1,7 @@
 const { Client, Collection, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const { statusChannel } = require('../../config.json');
+const { channels: { statusChannel } } = require('../../config.json');
 
 class DCinit 
 {
@@ -34,11 +34,10 @@ class DCinit
 			for (const f of cf)
 			{
 				const fp = path.join(cp, f);
-				const cmd = require(fp);
-				this.client.pc.set(cmd.name || cmd.data.name, cmd);
-				if (cmd.type === 'slash') {
-					this.client.sc.set(cmd.data.name, cmd);
-				}
+        		const cmd = require(fp);
+        
+        		if (cmd.type === 'plain') { this.client.pc.set(cmd.name, cmd); } 
+				if (cmd.type === 'slash') { this.client.sc.set(cmd.data.name, cmd); } 
 			}
 		}
 
@@ -77,9 +76,7 @@ class DCinit
 	
 		this.client.on('ready', () => 
 		{
-			const dcOnline = new EmbedBuilder()
-				.setColor(0x00FF00)
-				.setDescription('**Status: Online!**');
+			const dcOnline = new EmbedBuilder().setColor(0x00FF00).setDescription('**Status: Online!**');
 	
 			const channel = this.client.channels.cache.get(statusChannel);
 			channel.send({ embeds: [dcOnline] });
