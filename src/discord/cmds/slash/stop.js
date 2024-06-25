@@ -12,8 +12,8 @@ module.exports =
 
 	async execute(interaction) 
 	{
-		if (e.notCatboy(interaction)) { return; };
-		
+		if (e.notCatboy(interaction) && e.notRaccn(interaction)) { return; }
+
 		const stop = new EmbedBuilder().setColor('000000').setDescription('**Stopping...**');
 
 		exec('pm2 stop wsr', e.errors);

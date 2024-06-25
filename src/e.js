@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
-const { CatboyDark } = require('../auth.json');
+const { CatboyDark, SoupyRaccn } = require('../auth.json');
 
 const unknownErr = new EmbedBuilder().setColor('FF0000').setDescription('**Unknown Error! Please contact staff.**');
 
@@ -24,10 +24,21 @@ const cmdErrors = (interaction) =>
 
 const notCatboy = (interaction) => 
 {
-	const notCatboy = new EmbedBuilder().setColor('FF0000').setDescription('**Only <@622326625530544128> can use this command!**');
+	const notCatboy = new EmbedBuilder().setColor('FF0000').setDescription('**Only <@622326625530544128> or <@448912690329419776> can use this command!**');
 
 	if (interaction.user.id !== CatboyDark) {
 		interaction.reply({ embeds: [notCatboy] });
+		return true;
+	}
+	return false;
+};
+
+const notRaccn = (interaction) => 
+{
+	const notRaccn = new EmbedBuilder().setColor('FF0000').setDescription('**Only <@622326625530544128> or <@448912690329419776> can use this command!**');
+
+	if (interaction.user.id !== SoupyRaccn) {
+		interaction.reply({ embeds: [notRaccn] });
 		return true;
 	}
 	return false;
@@ -109,6 +120,7 @@ module.exports =
 	errors,
 	cmdErrors,
 	notCatboy,
+	notRaccn,
 	countCheck,
 	ageCheck,
 	permCheck,
