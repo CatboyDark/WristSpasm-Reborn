@@ -6,7 +6,7 @@ module.exports =
 {
 	type: 'slash',
 	data: new SlashCommandBuilder()
-	    .setName('kill')
+	    .setName('stop')
 	    .setDescription('Kill the bot')
 	    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
