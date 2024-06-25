@@ -23,7 +23,7 @@ module.exports = {
 	{
 		if (interaction.isChatInputCommand()) 
 		{
-			const command = interaction.client.commands.get(interaction.commandName);
+			const command = interaction.client.sc.get(interaction.commandName);
 			await command.execute(interaction).catch(e.cmdErrors(interaction));
 		}
 
