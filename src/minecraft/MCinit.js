@@ -76,6 +76,15 @@ class MCinit
 
         this.bot.on('end', () => {
             console.log(`${this.instance.username} has disconnected.`);
+			console.log('Attempting to reconnect in 10 seconds...');
+
+            setTimeout(() => 
+			{
+                this.bot = mineflayer.createBot(this.instance);
+                this.bot.once('spawn', () => {
+                    console.log('Reconnected successfully.');
+                });
+            }, 10000);
         });
     }
 }
