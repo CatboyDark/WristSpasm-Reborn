@@ -19,7 +19,7 @@ module.exports =
 				'### <:gcheck:1244687091162415176> Link your Account!\n' +
                 'Connect your Hypixel account to gain server access.\n' +
                 '\n' +
-                '*Please ping a staff member if the bot is down or if you require further assistance.*'
+                '*Please contact a staff member if the bot is down or if you require further assistance.*'
 			);
 
 		const row = new ActionRowBuilder().addComponents(

@@ -1,8 +1,31 @@
 const { EmbedBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const fs = require('fs');
 const { roles: { welcomeRole, linkedRole } } = require('../../../config.json');
-const e = require('../../e.js');
 const hypixel = require('../../contracts/hapi.js');
+
+const success = (interaction) => 
+{ interaction.reply({ embeds: new EmbedBuilder().setColor('00FF00').setDescription('<:gcheck:1244687091162415176> **Account linked!**') }); }; 
+
+const invalidIGN = (e, interaction) =>
+{
+	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Invalid IGN.**');
+	if (e.message.includes('Player does not exist.')) 
+	{ interaction.reply({ embeds: [embed], ephemeral: true }); return true; }
+};
+
+const unLinked = (interaction) =>
+{
+	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Discord is not linked!**\n\nClick on How to Link for more info.');
+	interaction.reply({ embeds: [embed], ephemeral: true });
+	return;
+};
+
+const noMatch = (interaction) =>
+{
+	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Your Discord does not match!**');
+	interaction.reply({ embeds: [embed], ephemeral: true });
+	return;
+};
 
 // Link Form
 
@@ -10,7 +33,7 @@ async function linkMsg(interaction)
 {
 	const modal = new ModalBuilder()
 		.setCustomId('linkM')
-		.setTitle('Link your account!')
+		.setTitle('Link Your Account')
 		.addComponents(new ActionRowBuilder().addComponents(
 			new TextInputBuilder()
 				.setCustomId('linkI')
@@ -46,42 +69,41 @@ async function linkHelpMsg(interaction)
 
 async function linkLogic(interaction) 
 {
-	const success = new EmbedBuilder().setColor('00FF00').setDescription('<:gcheck:1244687091162415176> **Account linked!**');
+	const user = interaction.guild.members.cache.get(interaction.user.tag);
+	// const non = user.roles.cache.has(welcomeRole);
 
-	const member = interaction.guild.members.cache.get(interaction.user.id);
-	const non = member.roles.cache.has(welcomeRole);
+	const player = await hypixel.getPlayer(interaction.fields.getTextInputValue('linkI'))
+	.catch((e) => { invalidIGN(e, interaction); }); if (invalidIGN) { return; };
+	const discord = await player.socialMedia.find(media => media.id === 'DISCORD');
+	if (!discord) { unLinked(interaction); }
+	if (user !== discord) { noMatch(interaction); };
+	// await user.setNickname(player.nickname);
 
-	const player = await hypixel.getPlayer(interaction.fields.getTextInputValue('linkI'));
-	if (e.link(interaction, player)) return;
-	const discord = player.socialMedia.find(media => media.id === 'DISCORD')?.link;
+	// user.roles.add(linkedRole);
+	// // if (non) { user.roles.remove(welcomeRole); }
 
-	await member.setNickname(player.nickname);
+	// if (e.match(interaction, discord)) {return;}
 
-	member.roles.add(linkedRole);
-	if (non) { member.roles.remove(welcomeRole); }
+	// const data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json', 'utf8')) : {};
+	// const DataL = data.Linked || [];
 
-	if (e.match(interaction, discord)) {return;}
+	// const entry = DataL.find(entry => entry.dcid === interaction.user.id);
+	// if (!entry)
+	// { 			
+	// 	DataL.push
+	// 	({
+	// 		dcid: interaction.user.id,
+	// 		uuid: player.uuid,
+	// 		ign: player.nickname
+	// 	});
+	// }
+	// else if (entry.ign !== player.nickname) {
+	// 	entry.ign = player.nickname;
+	// }
 
-	const data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json', 'utf8')) : {};
-	const DataL = data.Linked || [];
+	// fs.writeFileSync('data.json', JSON.stringify(data, null, 4));
 
-	const entry = DataL.find(entry => entry.dcid === interaction.user.id);
-	if (!entry)
-	{ 			
-		DataL.push
-		({
-			dcid: interaction.user.id,
-			uuid: player.uuid,
-			ign: player.nickname
-		});
-	}
-	else if (entry.ign !== player.nickname) {
-		entry.ign = player.nickname;
-	}
-
-	fs.writeFileSync('data.json', JSON.stringify(data, null, 4));
-
- 	interaction.reply({ embeds: [success], ephemeral: true });
+ 	// await interaction.reply('e');
 }
 
 module.exports = { linkMsg, linkHelpMsg, linkLogic };

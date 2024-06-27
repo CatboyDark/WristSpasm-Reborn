@@ -18,6 +18,17 @@ class MCinit
         this.bot = mineflayer.createBot(this.instance);
         this.client = client;
 
+        // Commands
+
+        const cDir = path.join(__dirname, 'cmds');
+		const cFiles = fs.readdirSync(cDir).filter(file => file.endsWith('.js'));
+
+		for (const c of cFiles) {
+            const cp = path.join(cDir, c);
+            const cmd = require(cp);
+            cmd(this.bot);
+        }
+
         // Features
 
         const fDir = path.join(__dirname, 'features');
