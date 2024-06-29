@@ -34,7 +34,7 @@ async function patcher(interaction)
 { await interaction.reply({ content: 'https://sk1er.club/', ephemeral: true}); }
 
 async function skyclient(interaction)
-{ await interaction.reply({ content: 'https://discord.gg/skyclient ', ephemeral: true}); }
+{ await interaction.reply({ content: 'https://discord.gg/skyclient', ephemeral: true}); }
 
 async function sba(interaction)
 { await interaction.reply({ content: 'https://discord.gg/RZYf8sfTFF', ephemeral: true}); }

@@ -1,5 +1,18 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const e = require('../../../e.js');
+
+const permCheck = (interaction, user, role) =>
+{
+	const noAddPerms = new EmbedBuilder().setColor('FF0000').setDescription('**You do not have permission to assign this role.**');
+	const noRemovePerms = new EmbedBuilder().setColor('FF0000').setDescription('**You do not have permission to remove this role.**');
+
+	if (interaction.member.roles.highest.comparePositionTo(role) <= 0) 
+	{
+		if (user.roles.cache.has(role.id)) 
+		{  interaction.reply({ embeds: [noRemovePerms]}); return true; }
+		else {  interaction.reply({ embeds: [noAddPerms] }); return true; }
+	}
+	return false;
+};
 
 module.exports =
 {
@@ -19,12 +32,12 @@ module.exports =
 		const roleAdd = new EmbedBuilder().setColor('00FF00').setDescription(`**${user} is now ${role}.**`);
 		const roleRemove = new EmbedBuilder().setColor('FF0000').setDescription(`**${user} is no longer ${role}.**`);
 
-		if (e.permCheck(interaction, user, role)) { return; }
+		if (permCheck(interaction, user, role)) { return; }
 
 		if (user.roles.cache.has(role.id)) {
 			user.roles.remove(role);
-			await interaction.reply({ embeds: [roleRemove] });
-		} else {
+			await interaction.reply({ embeds: [roleRemove] });} 
+		else {
 			user.roles.add(role);
 			await interaction.reply({ embeds: [roleAdd] });
 		}

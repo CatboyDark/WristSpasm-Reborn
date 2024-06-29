@@ -68,7 +68,6 @@ class DCinit
 			const feature = require(fp);
 			feature(this.client);
 		}
-
 	}
 
 	login() {

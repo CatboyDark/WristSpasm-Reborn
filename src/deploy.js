@@ -9,9 +9,9 @@ const readCommandFile = (filePath) =>
 {
     try {
         const command = require(filePath);
-        if (command.data && command.execute) {
-            return command.data.toJSON();
-        } else {
+        if (command.data && command.execute) 
+        { return command.data.toJSON(); } 
+        else {
             console.warn(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
             return null;
         }

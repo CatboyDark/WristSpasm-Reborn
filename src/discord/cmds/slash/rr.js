@@ -1,6 +1,16 @@
 const { ActionRowBuilder, SlashCommandBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
 const fs = require('fs');
-const e = require('../../../e.js');
+
+const success = new EmbedBuilder().setColor('00FF00').setDescription('**Success!**');
+
+const permCheck = (interaction, role) =>
+{
+	const noPerms = new EmbedBuilder().setColor('FF0000').setDescription('**You do not have permission to assign this role.**');
+
+	if (interaction.member.roles.highest.comparePositionTo(role) <= 0) 
+	{ interaction.reply({ embeds: [noPerms], ephemeral: true }); return true; }
+	return false;
+};
 
 module.exports =
 {
@@ -16,16 +26,13 @@ module.exports =
 
 	async execute(interaction) 
 	{
-		
-		const success = new EmbedBuilder().setColor('00FF00').setDescription('**Success!**');
-        
 		const button = interaction.options.getString('button');
 		const role = interaction.options.getRole('role');
 		let color = interaction.options.getString('color');
 		if (!/^([0-9A-F]{6})$/i.test(color)) { color = '000000'; }
 		const desc = new EmbedBuilder().setColor(color).setDescription(interaction.options.getString('desc'));
 
-		if (e.rrPermCheck(interaction, role)) { return; }
+		if (permCheck(interaction, role)) { return; }
 
 		const row = new ActionRowBuilder().addComponents(
 			new ButtonBuilder().setCustomId('rr').setLabel(button).setStyle(ButtonStyle.Success));

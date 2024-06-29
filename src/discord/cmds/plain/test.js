@@ -1,10 +1,9 @@
-module.exports = 
+module.exports =
 {
 	type: 'plain',
 	name: 'is kath a raging homosexual',
 
-	execute(message) 
-	{
-		message.channel.send('yep.');
+	execute(message) {
+		message.channel.send('no.');
 	}
 };

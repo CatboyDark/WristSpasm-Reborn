@@ -1,6 +1,25 @@
 const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 const { exec } = require('child_process');
-const e = require('../../../e.js');
+const { CatboyDark } = require('../../../../auth.json');
+
+const restart = new EmbedBuilder().setColor('000000').setDescription('**Restarting...**');
+
+const notCatboy = (interaction) => 
+{
+	const notCatboy = new EmbedBuilder().setColor('FF0000').setDescription('**Only <@622326625530544128> can use this command!**'); 
+
+	if (interaction.user.id !== CatboyDark) {
+		interaction.reply({ embeds: [notCatboy] });
+		return true;
+	}
+	return false;
+};
+
+const errors = (error, stderr) => 
+{
+	if (error) { console.log(`Error: ${error.message}`); return; }
+	if (stderr) { console.log(`STD Error: ${stderr}`); return; }
+};
 
 module.exports = 
 {
@@ -12,12 +31,10 @@ module.exports =
 
 	async execute(interaction) 
 	{
-		if (e.notCatboy(interaction)) { return; };
+		if (notCatboy(interaction)) { return; };
 
-		const restart = new EmbedBuilder().setColor('000000').setDescription('**Restarting...**');
-
-		exec('git pull && pm2 restart wsr', e.errors);
-
+		exec('git pull && pm2 restart wsr', errors);
+		
 		interaction.reply({ embeds: [restart] });
 	}
 };

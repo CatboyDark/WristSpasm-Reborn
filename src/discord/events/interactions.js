@@ -1,7 +1,19 @@
-const { Events } = require('discord.js');
+const { Events, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const e = require('../../e.js');
+
+const cmdError = (interaction) =>
+{
+	return error => 
+	{
+		const e = new EmbedBuilder().setColor('FF0000').setTitle('Error!').setDescription(`${error.message}`);
+
+		console.error(error);
+		if (interaction.replied || interaction.deferred) 
+		{ return interaction.followUp({ embeds: [e], ephemeral: true }); } 
+		else { return interaction.reply({ embeds: [e], ephemeral: true }); }
+	};
+};
 
 const lDir = path.join(__dirname, '../logic');
 const lFiles = fs.readdirSync(lDir).filter(file => file.endsWith('.js'));
@@ -24,7 +36,7 @@ module.exports = {
 		if (interaction.isChatInputCommand()) 
 		{
 			const command = interaction.client.sc.get(interaction.commandName);
-			await command.execute(interaction).catch(e.cmdErrors(interaction));
+			await command.execute(interaction).catch(cmdError(interaction));
 		}
 
 		else if (interaction.isButton()) {

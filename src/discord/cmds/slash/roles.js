@@ -3,6 +3,8 @@ const fs = require('fs');
 const { roles: { linkedRole, gRole } } = require('../../../../config.json');
 const hypixel = require('../../../contracts/hapi.js');
 
+const unLinked = new EmbedBuilder().setColor('FF0000').setDescription('You are not verified! Please link your account using /link.');
+
 module.exports = 
 {
 	type: 'slash',
@@ -11,7 +13,6 @@ module.exports =
 		.setDescription('Update your roles'),
 
 	async execute(interaction) {
-		const unLinked = new EmbedBuilder().setColor('FF0000').setDescription('You are not verified! Please link your account using /link.');
 
 		if (!interaction.member.roles.cache.has(linkedRole)) {
 			await interaction.reply({ embeds: [unLinked], ephemeral: true });

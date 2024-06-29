@@ -1,5 +1,20 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
-const e = require('../../../e.js');
+
+const countCheck = (interaction, count) => 
+{
+	const posNum = new EmbedBuilder().setColor('FF0000').setDescription('**You must purge at least one message!**');
+	const msgLimit = new EmbedBuilder().setColor('FF0000').setDescription('**You can only purge up to 100 messages!**');
+
+	if (count < 1) { interaction.reply({ embeds: [posNum], ephemeral: true }); return true; }
+	if (count > 100) { interaction.reply({ embeds: [msgLimit], ephemeral: true }); return true; }
+	return false;
+};
+
+const ageCheck = (interaction) =>
+{
+	const ageLimit = new EmbedBuilder().setColor('FF0000').setDescription('**You cannot purge messages older than 14 days!**');
+	return error => { if (error.code === 50034) { interaction.reply({ embeds: [ageLimit], ephemeral: true}); }};
+};
 
 module.exports = 
 {
@@ -19,7 +34,7 @@ module.exports =
 		const filter = interaction.options.getString('filter');
 		const count = interaction.options.getInteger('count');
 
-		if (e.countCheck(interaction, count)) return;
+		if (countCheck(interaction, count)) return;
 		let msg = await interaction.channel.messages.fetch({ limit: count });
 
 		let success;
@@ -34,6 +49,6 @@ module.exports =
 
 		await interaction.channel.bulkDelete(msg)
 			.then(() => interaction.reply({ embeds: [success], ephemeral: true }))
-			.catch(e.ageCheck(interaction));
+			.catch(ageCheck(interaction));
 	}
 };
