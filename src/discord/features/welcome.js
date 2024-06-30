@@ -9,7 +9,10 @@ module.exports = client =>
 
 		if (welcomeMsgToggle) 
 		{
-			const welcomeMsg = new EmbedBuilder().setColor('000000').setDescription(`**<@${member.id}> Welcome to the WristSpasm server!**`);
+			const welcomeMsg = new EmbedBuilder()
+				.setColor('000000')
+				.setDescription(`### Welcome to the WristSpasm server!\n### ${member}`)
+				.setThumbnail(member.user.displayAvatarURL());
 
 			const channel = member.guild.channels.cache.get(welcomeChannel);
 			await channel.send({ embeds: [welcomeMsg] });
