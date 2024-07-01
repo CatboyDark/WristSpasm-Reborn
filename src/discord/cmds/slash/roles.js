@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
-const { roles: { linkedRole, gRole } } = require('../../../../config.json');
+const { linkedRole, gRole } = require('../../../../config.json');
 const hypixel = require('../../../contracts/hapi.js');
 
 const unLinked = new EmbedBuilder().setColor('FF0000').setDescription('You are not verified! Please link your account using /link.');

@@ -1,5 +1,6 @@
 node_modules
 eslint.config.js
+prettier.config.js
 auth.json
 config.json
 data.json

@@ -1,7 +1,7 @@
 const { Client, Collection, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const { channels: { statusChannel } } = require('../../config.json');
+const { statusChannel } = require('../../config.json');
 
 class DCinit 
 {

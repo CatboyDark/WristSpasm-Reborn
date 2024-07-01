@@ -1,6 +1,6 @@
 const { EmbedBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const fs = require('fs');
-const { roles: { /*welcomeRole,*/ linkedRole } } = require('../../../config.json');
+const { /*welcomeRole,*/ linkedRole } = require('../../../config.json');
 const hypixel = require('../../contracts/hapi.js');
 const { Errors } = require('hypixel-api-reborn');
 

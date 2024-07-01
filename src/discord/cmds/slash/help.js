@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { roles: { staffRole } } = require('../../../../config.json');
+const { staffRole } = require('../../../../config.json');
 
 const nonC =
 [

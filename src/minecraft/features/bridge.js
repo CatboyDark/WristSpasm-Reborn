@@ -1,4 +1,4 @@
-const { features: { bridgeToggle }, channels: { logsChannel } } = require('../../../config.json');
+const { bridgeToggle, logsChannel } = require('../../../config.json');
 const ignore = JSON.parse(require('fs').readFileSync('ignore.json'));
 
 module.exports = (bot, client) => {

@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
-const { WristSpasm, channels: { welcomeChannel }, features: { welcomeMsgToggle, welcomeRoleToggle }, roles: { welcomeRole } } = require('../../../config.json');
+const { WristSpasm, welcomeChannel, welcomeMsgToggle, welcomeRoleToggle, welcomeRole } = require('../../../config.json');
 
 module.exports = client => 
 {
