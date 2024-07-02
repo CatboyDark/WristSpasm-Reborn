@@ -55,7 +55,7 @@ const rMods3 = new ActionRowBuilder().addComponents(
 );
 
 const rMining = new ActionRowBuilder().addComponents(
-	new ButtonBuilder().setCustomId('cult').setLabel('Mining Cult').setStyle(ButtonStyle.Success),
+	new ButtonBuilder().setCustomId('cult').setLabel('Mining Cult').setStyle(ButtonStyle.Success)
 );
 
 const rFarming = new ActionRowBuilder().addComponents(

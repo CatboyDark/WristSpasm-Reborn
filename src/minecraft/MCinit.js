@@ -3,15 +3,17 @@ const path = require('path');
 const fs = require('fs');
 const { ign } = require('../../auth.json');
 
-class MCinit {
-	constructor(client) {
+class MCinit 
+{
+	constructor(client) 
+	{
 		this.instance = {
 			host: 'mc.hypixel.net',
 			username: ign,
 			auth: 'microsoft',
 			version: '1.8.9',
 			viewDistance: 'tiny',
-			chatLengthLimit: 256,
+			chatLengthLimit: 256
 		};
 
 		this.bot = mineflayer.createBot(this.instance);
@@ -20,39 +22,42 @@ class MCinit {
 		// Commands
 
 		const cDir = path.join(__dirname, 'cmds');
-		const cFiles = fs
-			.readdirSync(cDir)
-			.filter((file) => file.endsWith('.js'));
+		const cFiles = fs.readdirSync(cDir).filter((file) => file.endsWith('.js'));
 
-		this.bot.on('message', (message) => {
+		this.bot.on('message', (message) => 
+		{
 			const content = message.toString();
 
-			if (content.startsWith('Officer >')) {
+			if (content.startsWith('Officer >')) 
+			{
 				const msg = getMsg(content.slice(10).trim());
 				if (msg) cmds('officer', msg);
-			} else if (content.startsWith('Guild >')) {
+			}
+			else if (content.startsWith('Guild >')) 
+			{
 				const msg = getMsg(content.slice(8).trim());
 				if (msg) cmds('guild', msg);
 			}
 		});
 
-		const getMsg = (message) => {
+		const getMsg = (message) =>
+		{
 			const match = message.match(/^[^:]+: (.*)$/);
 			return match ? match[1] : null;
 		};
 
-		const cmds = (type, content) => {
+		const cmds = (type, content) => 
+		{
 			const args = content.split(/ +/);
 			const command = args.shift().toLowerCase();
 
-			for (const c of cFiles) {
+			for (const c of cFiles) 
+			{
 				const cp = path.join(cDir, c);
 				const cmd = require(cp);
 
-				if (
-					cmd.type === type &&
-					command === cmd.command.toLowerCase()
-				) {
+				if (cmd.type === type && command === cmd.command.toLowerCase()) 
+				{
 					cmd.execute(this.bot, args);
 					return;
 				}
@@ -62,18 +67,15 @@ class MCinit {
 		// Features
 
 		const fDir = path.join(__dirname, 'features');
-		const fFiles = fs
-			.readdirSync(fDir)
-			.filter((file) => file.endsWith('.js'));
+		const fFiles = fs.readdirSync(fDir).filter((file) => file.endsWith('.js'));
 
-		for (const f of fFiles) {
+		for (const f of fFiles) 
+		{
 			const fp = path.join(fDir, f);
 			const feature = require(fp);
-			if (typeof feature === 'function') {
-				feature(this.bot, this.client);
-			} else {
-				console.error(`Feature at ${fp} is not a function.`);
-			}
+			if (typeof feature === 'function')
+			{ feature(this.bot, this.client); }
+			else { console.error(`Feature at ${fp} is not a function.`); }
 		}
 
 		// Logic
@@ -84,50 +86,54 @@ class MCinit {
 			.readdirSync(lDir)
 			.filter((file) => file.endsWith('.js'));
 
-		for (const file of lFiles) {
+		for (const file of lFiles) 
+		{
 			const logicModule = require(path.join(lDir, file));
-			if (typeof logicModule === 'object' && logicModule !== null) {
-				Object.assign(this.Logic, logicModule);
-			} else {
-				this.Logic[file.replace('.js', '')] = logicModule;
-			}
+			if (typeof logicModule === 'object' && logicModule !== null) 
+			{ Object.assign(this.Logic, logicModule); }
+			else { this.Logic[file.replace('.js', '')] = logicModule; }
 		}
 	}
 
-	login() {
-		this.bot.on('login', () => {
+	login() 
+	{
+		this.bot.on('login', () => 
+		{
 			const botSocket = this.bot._client.socket;
-			console.log(
-				`${this.instance.username} has joined ${botSocket.server ? botSocket.server : botSocket._host}.`,
-			);
-
-			this.bot.chat('/w PuppyboyDark meow');
+			console.log(`${this.instance.username} has joined ${botSocket.server ? botSocket.server : botSocket._host}.`);
 
 			this.Logic.limbo(this.bot);
 		});
 
-		this.bot.on('kicked', (reason) => {
+		this.bot.on('kicked', (reason) => 
+		{
 			console.log(`Kicked: ${reason}`);
 			console.log('Attempting to reconnect in 10 seconds...');
 
-			setTimeout(() => {
+			setTimeout(() => 
+			{
 				this.bot = mineflayer.createBot(this.instance);
-				this.bot.once('spawn', () => {
-					console.log('Reconnected successfully.');
+				this.bot.once('spawn', () => 
+				{
+					console.log('Reconnected.');
+					this.Logic.limbo(this.bot);
 				});
 			}, 10000);
 		});
 
 		this.bot.on('error', console.log);
 
-		this.bot.on('end', () => {
+		this.bot.on('end', () => 
+		{
 			console.log(`${this.instance.username} has disconnected.`);
 			console.log('Attempting to reconnect in 10 seconds...');
 
-			setTimeout(() => {
+			setTimeout(() => 
+			{
 				this.bot = mineflayer.createBot(this.instance);
-				this.bot.once('spawn', () => {
-					console.log('Reconnected successfully.');
+				this.bot.once('spawn', () => 
+				{
+					console.log('Reconnected.');
 				});
 			}, 10000);
 		});

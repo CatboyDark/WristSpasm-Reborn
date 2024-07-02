@@ -12,13 +12,17 @@ module.exports =
 		if (data['Reaction Roles']) 
 		{
 			let found = false;
-			for (const [key, value] of Object.entries(data['Reaction Roles'])) {
-				if (value.messageId === deletedMessage.id) {
+			for (const [key, value] of Object.entries(data['Reaction Roles'])) 
+			{
+				if (value.messageId === deletedMessage.id) 
+				{
 					delete data['Reaction Roles'][key];
 					found = true;
 					break; 
-				}}
-			if (found) {
+				}
+			}
+			if (found) 
+			{
 				const formattedData = JSON.stringify(data, null, 4);
 				fs.writeFileSync('data.json', formattedData);
 			}

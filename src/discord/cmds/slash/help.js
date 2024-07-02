@@ -4,7 +4,7 @@ const { staffRole } = require('../../../../config.json');
 const nonC =
 [
 	'help',
-	'roles',
+	'roles'
 ];
 
 const staffC =
@@ -29,7 +29,8 @@ module.exports =
 		const commands = await interaction.client.application.commands.fetch();
 
 		const cList = commands
-			.filter(cmd => {
+			.filter(cmd => 
+			{
 				if (interaction.member.roles.cache.some(role => staffRole.includes(role.id))) 
 				{ return nonC.includes(cmd.name) || staffC.includes(cmd.name); } 
 				else { return nonC.includes(cmd.name); }
@@ -58,5 +59,5 @@ module.exports =
 			);
 
 		await interaction.reply({ embeds: [info] });
-	},
+	}
 };

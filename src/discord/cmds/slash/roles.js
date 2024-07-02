@@ -12,9 +12,11 @@ module.exports =
 		.setName('roles')
 		.setDescription('Update your roles'),
 
-	async execute(interaction) {
+	async execute(interaction) 
+	{
 
-		if (!interaction.member.roles.cache.has(linkedRole)) {
+		if (!interaction.member.roles.cache.has(linkedRole)) 
+		{
 			await interaction.reply({ embeds: [unLinked], ephemeral: true });
 			return;
 		}
@@ -23,28 +25,31 @@ module.exports =
 		const DataL = data.Linked || [];
 		const u = DataL.find(user => user.dcid === interaction.user.id);
 
-		if (!u) {
+		if (!u) 
+		{
 			await interaction.reply({ content: 'User not found in linked data.', ephemeral: true });
 			return;
 		}
 
-		const handleError = async (message) => {
+		const handleError = async (message) => 
+		{
 			console.error(message);
 			await interaction.reply({ content: message, ephemeral: true });
 		};
 
 		const guild = await hypixel.getGuild('player', `${u.ign}`);
-		if (guild) {
+		if (guild) 
+		{
 			const gMember = guild.name === 'WristSpasm';
-			if (gMember && !interaction.member.roles.cache.has(gRole)) {
-				await interaction.member.roles.add(gRole);
-			} else if (!gMember && interaction.member.roles.cache.has(gRole)) {
-				await interaction.member.roles.remove(gRole);
-			}
+			if (gMember && !interaction.member.roles.cache.has(gRole)) 
+			{ await interaction.member.roles.add(gRole); }
+			else if (!gMember && interaction.member.roles.cache.has(gRole)) 
+			{ await interaction.member.roles.remove(gRole); }
 		}
 
 		const player = await hypixel.getPlayer(u.ign);
-		if (!player) {
+		if (!player) 
+		{
 			await handleError('Player not found on Hypixel.');
 			return;
 		}

@@ -1,7 +1,8 @@
 const { bridgeToggle, logsChannel } = require('../../../config.json');
 const ignore = JSON.parse(require('fs').readFileSync('ignore.json'));
 
-module.exports = (bot, client) => {
+module.exports = (bot, client) => 
+{
 	bot.on('message', message => // Ingame -> Discord
 	{
 		if (!bridgeToggle) { return; }
@@ -21,7 +22,8 @@ module.exports = (bot, client) => {
 		if (!bridgeToggle) { return; }
 
 		const channel = client.channels.cache.get(logsChannel);
-		if (message.channel.id === channel?.id) {
+		if (message.channel.id === channel?.id) 
+		{
 			const content = message.content;
 			if (message.author.bot) { return; }
 

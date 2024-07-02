@@ -34,10 +34,13 @@ module.exports =
 
 		if (permCheck(interaction, user, role)) { return; }
 
-		if (user.roles.cache.has(role.id)) {
+		if (user.roles.cache.has(role.id)) 
+		{
 			user.roles.remove(role);
-			await interaction.reply({ embeds: [roleRemove] });} 
-		else {
+			await interaction.reply({ embeds: [roleRemove] });
+		} 
+		else 
+		{
 			user.roles.add(role);
 			await interaction.reply({ embeds: [roleAdd] });
 		}

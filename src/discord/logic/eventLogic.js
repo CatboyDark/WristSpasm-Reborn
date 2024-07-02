@@ -25,16 +25,19 @@ async function eventA(interaction)
 
 async function eventA_start(interaction) 
 { 
-	if (played.has(interaction.user.id)) {
+	if (played.has(interaction.user.id)) 
+	{
 		return interaction.reply({ content: 'You have already played this game!', ephemeral: true });
 	}
 
 	const rows = [];
-	for (let i = 0; i < 5; i++) {
+	for (let i = 0; i < 5; i++) 
+	{
 		rows.push(new ActionRowBuilder());
 	}
 
-	for (let i = 0; i < 25; i++) {
+	for (let i = 0; i < 25; i++) 
+	{
 		const button = new ButtonBuilder()
 			.setCustomId('button' + i)
 			.setLabel('🐱')
@@ -48,24 +51,29 @@ async function eventA_start(interaction)
 	const filter = (i) => i.customId.startsWith('button');
 	const collector = interaction.channel.createMessageComponentCollector({ filter, time: 60000 });
 
-	collector.on('collect', async (i) => {
-		if (i.customId === prize1) {
+	collector.on('collect', async (i) => 
+	{
+		if (i.customId === prize1) 
+		{
 			await i.reply({ content: 'Congrats! You won 100M!', ephemeral: true });
 			collector.stop();
-		} else {
+		}
+		else 
+		{
 			await i.reply({ content: 'Bleh.', ephemeral: true });
 		}
 	});
 
-	collector.on('end', async collected => {
+	collector.on('end', async collected => 
+	{
 		console.log(`Collected ${collected.size} interactions.`);
-		rows.forEach(row => {
-			row.components.forEach(button => {
-				if (button.data.custom_id === prize1) {
-					button.setStyle(ButtonStyle.Success).setLabel('🎉');
-				} else {
-					button.setDisabled(true);
-				}
+		rows.forEach(row => 
+		{
+			row.components.forEach(button => 
+			{
+				if (button.data.custom_id === prize1) 
+				{ button.setStyle(ButtonStyle.Success).setLabel('🎉'); }
+				else { button.setDisabled(true); }
 			});
 		});
 		await interaction.editReply({ components: rows });

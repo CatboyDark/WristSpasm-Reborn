@@ -8,7 +8,8 @@ const notCatboy = (interaction) =>
 {
 	const notCatboy = new EmbedBuilder().setColor('FF0000').setDescription('**Only <@622326625530544128> can use this command!**'); 
 
-	if (interaction.user.id !== CatboyDark) {
+	if (interaction.user.id !== CatboyDark) 
+	{
 		interaction.reply({ embeds: [notCatboy] });
 		return true;
 	}

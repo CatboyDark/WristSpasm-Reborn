@@ -6,24 +6,28 @@ const { Errors } = require('hypixel-api-reborn');
 
 const success = (interaction) => { interaction.followUp({ embeds: [new EmbedBuilder().setColor('00FF00').setDescription('<:gcheck:1244687091162415176> **Account linked!**')] }); };
 
-const invalidIGN = (e, interaction) => {
+const invalidIGN = (e, interaction) => 
+{
 	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Invalid IGN.**');
 	if (e.message === Errors.PLAYER_DOES_NOT_EXIST) { interaction.followUp({ embeds: [embed], ephemeral: true }); }
 };
 
-const unLinked = (interaction) => {
+const unLinked = (interaction) => 
+{
 	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Discord is not linked!**\n\nClick on How to Link for more info.');
 	return interaction.followUp({ embeds: [embed], ephemeral: true });
 };
 
-const noMatch = (interaction) => {
+const noMatch = (interaction) => 
+{
 	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Your Discord does not match!**');
 	return interaction.followUp({ embeds: [embed], ephemeral: true });
 };
 
 // Link Form
 
-async function linkMsg(interaction) {
+async function linkMsg(interaction) 
+{
 	const modal = new ModalBuilder()
 		.setCustomId('linkM')
 		.setTitle('Link Your Account')
@@ -41,7 +45,8 @@ async function linkMsg(interaction) {
 
 // Link Help
 
-async function linkHelpMsg(interaction) {
+async function linkHelpMsg(interaction) 
+{
 	const embed = new EmbedBuilder()
 		.setColor('03A9F4')
 		.setTitle('How to Link Your Account')
@@ -59,8 +64,10 @@ async function linkHelpMsg(interaction) {
 
 // Link Logic
 
-async function linkLogic(interaction) {
-	try {
+async function linkLogic(interaction) 
+{
+	try 
+	{
 		await interaction.deferReply({ ephemeral: true });
 		// const non = user.roles.cache.has(welcomeRole);
 
@@ -96,7 +103,8 @@ async function linkLogic(interaction) {
 		// fs.writeFileSync('data.json', JSON.stringify(data, null, 4));
 
 		return success(interaction);
-	} catch (e) { console.log(e); }
+	}
+	catch (e) { console.log(e); }
 }
 
 module.exports = { linkMsg, linkHelpMsg, linkLogic };

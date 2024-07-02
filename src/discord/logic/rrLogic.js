@@ -19,10 +19,13 @@ module.exports = async (interaction) =>
 	// if (roleId === '1183240686678589541')
 	// { if (!member.roles.cache.has(config.gmemberRole)) { return interaction.reply({ content: 'You must be a guild member to join our SMP!', ephemeral: true }); } }
 
-	if (member.roles.cache.has(role.id)) {
+	if (member.roles.cache.has(role.id)) 
+	{
 		await member.roles.remove(role);
 		await interaction.reply({ embeds: [roleRemove], ephemeral: true });
-	} else {
+	}
+	else 
+	{
 		await member.roles.add(role);
 		await interaction.reply({ embeds: [roleAdd], ephemeral: true });
 	}

@@ -39,7 +39,8 @@ module.exports =
 
 		let success;
 		if (msg.size === 1) { success = new EmbedBuilder().setColor('00FF00').setDescription('**Deleted a message.**'); }
-		else { 
+		else 
+		{ 
 			const f = filter === 'user' ? 'user' : (filter === 'bot' ? 'bot' : '');
 			success = new EmbedBuilder().setColor('00FF00').setDescription(`**Deleted ${msg.size} ${f} messages.**`);
 		}

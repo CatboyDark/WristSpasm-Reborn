@@ -39,7 +39,8 @@ module.exports = {
 			await command.execute(interaction).catch(cmdError(interaction));
 		}
 
-		else if (interaction.isButton()) {
+		else if (interaction.isButton()) 
+		{
 			const buttons = interaction.customId;
 
 			switch (buttons) 
@@ -160,7 +161,7 @@ module.exports = {
 				    await Logic.elitef(interaction);
 			    break;
 
-			// sEvents
+				// sEvents
 
 			    case 'eventA':
 				    await Logic.eventA(interaction);
@@ -178,8 +179,8 @@ module.exports = {
 
 			switch (modals) 
 			{
-				case 'linkM':
-					await Logic.linkLogic(interaction);
+			case 'linkM':
+				await Logic.linkLogic(interaction);
 				break;
 			}
 		}
