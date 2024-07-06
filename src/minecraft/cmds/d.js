@@ -7,10 +7,24 @@ module.exports = {
 
 	async execute(bot, args) 
 	{
-		const ign = args[0];
-		const player = await hypixel.getPlayer(ign);
-		const discord = await player.socialMedia.find( (media) => media.id === 'DISCORD');
+		try
+		{
+			const ign = args[0];
+			const player = await hypixel.getPlayer(ign);
+			const discord = await player.socialMedia.find((media) => media.id === 'DISCORD');
 
-		send(bot, `/oc ${player}: @${discord.link}`);
+			if (!discord)
+			{
+				send(bot, '/oc Discord not linked.');
+				return;
+			}
+
+			send(bot, `/oc ${player}: @${discord.link}`);
+		}
+		catch (e)
+		{
+			if (e.message.includes('Player does not exist'))
+			{ send(bot, '/oc Invalid IGN.'); }
+		}
 	}
 };

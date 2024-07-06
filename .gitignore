@@ -3,4 +3,4 @@ eslint.config.js
 auth.json
 config.json
 data.json
-blank.json
+ignore.json

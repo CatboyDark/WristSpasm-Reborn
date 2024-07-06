@@ -11,10 +11,10 @@ module.exports = (bot, client) =>
 		const isIgnored = ignore.some(ignoredPhrase => content.startsWith(ignoredPhrase));
 		if (content.length < 1 || isIgnored) { return; }
 
-		const censoredContent = content.replace(/<@/g, '<@\u200B').replace(/<#/g, '<#\u200B').replace(/<:/g, '<:\u200B').replace(/<a/g, '<a\u200B').replace(/@everyone/g, '@ everyone').replace(/@here/g, '@ here');
+		const fContent = content.replace(/<@/g, '<@\u200B').replace(/<#/g, '<#\u200B').replace(/<:/g, '<:\u200B').replace(/<a/g, '<a\u200B').replace(/@everyone/g, '@ everyone').replace(/@here/g, '@ here');
 		
 		const channel = client.channels.cache.get(logsChannel);
-		channel.send(`${censoredContent}`);
+		channel.send(`${fContent}`);
 	});
 
 	client.on('messageCreate', message => // Discord -> Ingame
