@@ -62,7 +62,7 @@ module.exports =
 			if (args[1] === 'e')
 			{
 				setTimeout(() => { send(bot, `/oc [${rankName}] (${rankRank}) Weekly GXP: ${getWGXP(wGXP)}. Joined: ${getTime(joinDate)}.`); }, 500);
-				setTimeout(() => { send(bot, `/oc Level: ${Math.floor(guild.level)}. Members: ${guild.members.length}.`); }, 1000);
+				setTimeout(() => { send(bot, `/oc Guild Level: ${Math.floor(guild.level)}. Members: ${guild.members.length}.`); }, 1000);
 			}
 		}
 		catch (e)
