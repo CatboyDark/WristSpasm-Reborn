@@ -1,9 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
-const { linkedRole, gRole } = require('../../../../config.json');
+const { linkedRole, gRole, sbRoles } = require('../../../../config.json');
 const hypixel = require('../../../contracts/hapi.js');
 
-const unLinked = new EmbedBuilder().setColor('FF0000').setDescription('You are not verified! Please link your account using /link.');
+const unLinked = new EmbedBuilder().setColor('FF0000').setDescription('**You are not linked!**\n_ _\nThis should not be possible. Please ask a staff member for help.');
 
 module.exports = 
 {
@@ -14,45 +14,86 @@ module.exports =
 
 	async execute(interaction) 
 	{
-
-		if (!interaction.member.roles.cache.has(linkedRole)) 
+		try
 		{
-			await interaction.reply({ embeds: [unLinked], ephemeral: true });
-			return;
+			await interaction.deferReply();
+
+			if (!interaction.member.roles.cache.has(linkedRole))
+			{
+				await interaction.followUp({ embeds: [unLinked], ephemeral: true });
+				return;
+			}
+
+			const data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json', 'utf8')) : {};
+			const DataL = data.Linked || [];
+			const player = DataL.find(user => user.dcid === interaction.user.id);
+
+			if (!player)
+			{
+				await interaction.reply({ embeds: [unLinked], ephemeral: true });
+				return;
+			}
+
+			const guild = await hypixel.getGuild('player', `${player.ign}`);
+
+			const addedRoles = [];
+			const removedRoles = [];
+
+			if (guild && guild.name === 'WristSpasm')
+			{
+				if (!interaction.member.roles.cache.has(gRole))
+				{
+					await interaction.member.roles.add(gRole); 
+					addedRoles.push(gRole);
+				}
+			}
+			else
+			{
+				if (interaction.member.roles.cache.has(gRole))
+				{
+					await interaction.member.roles.remove(gRole); 
+					removedRoles.push(gRole);
+				}
+			}
+
+			const sbMember = await hypixel.getSkyblockMember(`${player.uuid}`);
+
+			let highestLevel = 0;
+			for (const [profileName, profileData] of sbMember.entries())
+			{ if (highestLevel < profileData.level) { highestLevel = profileData.level; } }
+
+			let assignedRole = sbRoles[0].roleId;
+			for (const role of sbRoles)
+			{
+				if (highestLevel >= role.level)
+				{ assignedRole = role.roleId; }
+				else { break; }
+			}
+
+			if (!interaction.member.roles.cache.has(assignedRole))
+			{
+				await interaction.member.roles.add(assignedRole);
+				addedRoles.push(assignedRole);
+			}
+
+			for (const sbRole of sbRoles)
+			{
+				if (interaction.member.roles.cache.has(sbRole.roleId) && sbRole.roleId !== assignedRole)
+				{
+					await interaction.member.roles.remove(sbRole.roleId);
+					removedRoles.push(sbRole.roleId);
+				}
+			}
+
+			const addedRolesMap = addedRoles.length > 0 ? addedRoles.map(roleId => `<:plus:1259498381206618164> <@&${roleId}>`).join('\n') : '';
+			const removedRolesMap = removedRoles.length > 0 ? removedRoles.map(roleId => `<:minus:1259498392116133918> <@&${roleId}>`).join('\n') : '';
+
+			let success = new EmbedBuilder().setColor('00FF00').setDescription(`**Your roles have been updated!**\n_ _\n${addedRolesMap}\n_ _\n${removedRolesMap}`);
+			if (addedRoles.length === 0 && removedRoles.length === 0)
+			{ success = new EmbedBuilder().setColor('00FF00').setDescription('**Your roles are up to date!**'); }
+
+			interaction.followUp({ embeds: [success] });
 		}
-
-		const data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json', 'utf8')) : {};
-		const DataL = data.Linked || [];
-		const u = DataL.find(user => user.dcid === interaction.user.id);
-
-		if (!u) 
-		{
-			await interaction.reply({ content: 'User not found in linked data.', ephemeral: true });
-			return;
-		}
-
-		const handleError = async (message) => 
-		{
-			console.error(message);
-			await interaction.reply({ content: message, ephemeral: true });
-		};
-
-		const guild = await hypixel.getGuild('player', `${u.ign}`);
-		if (guild) 
-		{
-			const gMember = guild.name === 'WristSpasm';
-			if (gMember && !interaction.member.roles.cache.has(gRole)) 
-			{ await interaction.member.roles.add(gRole); }
-			else if (!gMember && interaction.member.roles.cache.has(gRole)) 
-			{ await interaction.member.roles.remove(gRole); }
-		}
-
-		const player = await hypixel.getPlayer(u.ign);
-		if (!player) 
-		{
-			await handleError('Player not found on Hypixel.');
-			return;
-		}
-		
+		catch (e) { console.log(e); } 
 	}
 };

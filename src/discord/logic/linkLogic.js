@@ -1,27 +1,36 @@
 const { EmbedBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const fs = require('fs');
-const { /*welcomeRole,*/ linkedRole } = require('../../../config.json');
+const { welcomeRole, welcomeRoleToggle, linkedRole } = require('../../../config.json');
 const hypixel = require('../../contracts/hapi.js');
 const { Errors } = require('hypixel-api-reborn');
 
-const success = (interaction) => { interaction.followUp({ embeds: [new EmbedBuilder().setColor('00FF00').setDescription('<:gcheck:1244687091162415176> **Account linked!**')] }); };
-
-const invalidIGN = (e, interaction) => 
+const success = (interaction) =>
 {
-	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Invalid IGN.**');
-	if (e.message === Errors.PLAYER_DOES_NOT_EXIST) { interaction.followUp({ embeds: [embed], ephemeral: true }); }
+	const embed = new EmbedBuilder().setColor('00FF00').setDescription('<:gcheck:1244687091162415176> **Account linked!**');
+	interaction.followUp({ embeds: [embed], ephemeral: true });
+};
+
+const invalidIGN = (interaction) => 
+{
+	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Invalid Username!**');
+	return interaction.followUp({ embeds: [embed], ephemeral: true });
 };
 
 const unLinked = (interaction) => 
 {
-	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Discord is not linked!**\n\nClick on How to Link for more info.');
+	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Discord is not linked!**\n_ _\nClick on How To Link for more info.');
 	return interaction.followUp({ embeds: [embed], ephemeral: true });
 };
 
 const noMatch = (interaction) => 
 {
-	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Your Discord does not match!**');
+	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Discord does not match!**\n_ _\nClick on How To Link for more info.');
 	return interaction.followUp({ embeds: [embed], ephemeral: true });
+};
+
+const noPerms = (interaction) => {
+	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Uhhhhhh Missing Perms!**');
+	interaction.followUp({ embeds: [embed], ephemeral: true });
 };
 
 // Link Form
@@ -69,42 +78,45 @@ async function linkLogic(interaction)
 	try 
 	{
 		await interaction.deferReply({ ephemeral: true });
-		// const non = user.roles.cache.has(welcomeRole);
 
 		const input = interaction.fields.getTextInputValue('linkI');
-		const player = await hypixel.getPlayer(input).catch((e) => { console.log(e); return invalidIGN(e, interaction); });
+		const player = await hypixel.getPlayer(input);
 		const discord = await player.socialMedia.find(media => media.id === 'DISCORD');
 		if (!discord) { return unLinked(interaction); }
 		if (interaction.user.username !== discord.link) { return noMatch(interaction); };
 
-		// await user.setNickname(player.nickname);
-		// user.roles.add(linkedRole);
-		// if (non) { user.roles.remove(welcomeRole); }
+		try { await interaction.member.setNickname(player.nickname); } catch (e) { if (e.message.includes('Missing Permissions')) { noPerms(interaction); console.log(e); } }
+		await interaction.member.roles.add(linkedRole);
+
+		if (welcomeRoleToggle) { if (interaction.user.roles.cache.has(welcomeRole)) { interaction.user.roles.remove(welcomeRole); } }
 
 		// Datify
 
-		// const data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json', 'utf8')) : {};
-		// const DataL = data.Linked || [];
+		const data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json', 'utf8')) : {};
+		const DataL = data.Linked || [];
 
-		// const entry = DataL.find(entry => entry.dcid === interaction.user.id);
-		// if (!entry)
-		// { 			
-		// 	DataL.push
-		// 	({
-		// 		dcid: interaction.user.id,
-		// 		uuid: player.uuid,
-		// 		ign: player.nickname
-		// 	});
-		// }
-		// else if (entry.ign !== player.nickname) {
-		// 	entry.ign = player.nickname;
-		// }
+		const entry = DataL.find(entry => entry.dcid === interaction.user.id);
+		if (!entry)
+		{ 			
+			DataL.push
+			({
+				dcid: interaction.user.id,
+				uuid: player.uuid,
+				ign: player.nickname
+			});
+		}
+		else if (entry.ign !== player.nickname) {
+			entry.ign = player.nickname;
+		}
 
-		// fs.writeFileSync('data.json', JSON.stringify(data, null, 4));
+		fs.writeFileSync('data.json', JSON.stringify(data, null, 4));
 
 		return success(interaction);
 	}
-	catch (e) { console.log(e); }
+	catch (e)
+	{
+		if (e.message === Errors.PLAYER_DOES_NOT_EXIST) { return invalidIGN(interaction); }
+	}
 }
 
 module.exports = { linkMsg, linkHelpMsg, linkLogic };

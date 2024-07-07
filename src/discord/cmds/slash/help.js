@@ -14,7 +14,7 @@ const staffC =
 	'rr',
 	'slink',
 	'sservers',
-	'ssevent'
+	'sevent'
 ];
 
 module.exports = 

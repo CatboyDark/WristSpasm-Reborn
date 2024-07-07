@@ -1,15 +1,19 @@
-const hypixel = require('../../../contracts/hapi.js');
+// const hypixel = require('../../contracts/hapi.js');
+// const { send } = require('../chat.js');
+// const { Errors } = require('hypixel-api-reborn');
 
-module.exports = {
-	type: 'plain',
-	name: 'discord',
+// const unlinked = (bot) =>
+// {
+// 	send(bot, '/oc No Discord found!');
+// 	return;
+// };
 
-	async execute(message, args) 
-	{
-		if (args.length === 0) 
-		{
-			return message.reply('Please provide a username!');
-		}
-		message.channel.send(`You provided the argument: ${args[0]}`);
-	}
-};
+// module.exports = {
+// 	type: 'plain',
+// 	name: '.d',
+
+// 	async execute(args) 
+// 	{
+
+// 	}
+// };

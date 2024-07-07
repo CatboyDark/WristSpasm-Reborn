@@ -22,7 +22,7 @@ module.exports =
 	type: 'slash',
 	data: new SlashCommandBuilder()
 		.setName('slink')
-		.setDescription('Setup Linking Channel')
+		.setDescription('Setup linking channel')
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
 	async execute(interaction) 

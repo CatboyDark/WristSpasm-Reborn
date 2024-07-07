@@ -9,13 +9,13 @@ module.exports = (bot) =>
 		if (text.startsWith('Officer >') && text.includes('.on')) 
 		{ 
 			bot.chat('/status online');
-			setTimeout(() => { send(bot, '/oc Status has been set to: Online!'); }, 500);
+			setTimeout(() => { send(bot, '/oc Status: Online!'); }, 500);
 		}
 
 		if (text.startsWith('Officer >') && text.includes('.off')) 
 		{ 
 			bot.chat('/status offline');
-			setTimeout(() => { send(bot, '/oc Status has been set to: Offline!'); }, 500);
+			setTimeout(() => { send(bot, '/oc Status: Offline!'); }, 500);
 		}
 	});
 };

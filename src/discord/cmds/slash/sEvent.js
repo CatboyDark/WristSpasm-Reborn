@@ -13,7 +13,7 @@ module.exports =
 	type: 'slash',
 	data: new SlashCommandBuilder()
 		.setName('sevent')
-		.setDescription('Setup Event')
+		.setDescription('Setup events')
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
 	async execute(interaction) 

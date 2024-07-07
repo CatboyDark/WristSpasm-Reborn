@@ -1,5 +1,12 @@
 const hypixel = require('../../contracts/hapi.js');
 const { send } = require('../chat.js');
+const { Errors } = require('hypixel-api-reborn');
+
+const guildless = (bot, player) =>
+{
+	send(bot, `/oc ${player} is not in a guild!`);
+	return;
+};
 
 function getTime(timestamp)
 {
@@ -46,11 +53,7 @@ module.exports =
 			const player = await hypixel.getPlayer(args[0]);
 			const guild = await hypixel.getGuild('player', player.uuid);
 
-			if (!guild)
-			{
-				send(bot, `/oc ${player} is not in a guild!`);
-				return;
-			}
+			if (!guild) { guildless(bot, player); }
 			
 			const rankName = await guild.me.rank;
 			const rankRank = await guild.ranks.find(rank => rank.name === rankName).priority;
@@ -67,8 +70,8 @@ module.exports =
 		}
 		catch (e)
 		{
-			if (e.message.includes(`${args[0]} does not exist!`))
-			{ send(bot, '/oc Invalid IGN.'); }
+			if (e.message === Errors.PLAYER_DOES_NOT_EXIST)
+			{ send(bot, '/oc Invalid Username!'); }
 		}
 	}
 };

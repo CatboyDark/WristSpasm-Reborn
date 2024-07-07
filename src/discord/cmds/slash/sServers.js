@@ -68,7 +68,7 @@ module.exports =
 	type: 'slash',
 	data: new SlashCommandBuilder()
 		.setName('sservers')
-		.setDescription('Setup Discords Channel')
+		.setDescription('Setup Skyblock Discords channel')
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
 	async execute(interaction) 

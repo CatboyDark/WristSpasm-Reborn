@@ -1,7 +1,15 @@
 const hypixel = require('../../contracts/hapi.js');
 const { send } = require('../chat.js');
+const { Errors } = require('hypixel-api-reborn');
 
-module.exports = {
+const unlinked = (bot) =>
+{
+	send(bot, '/oc No Discord found!');
+	return;
+};
+
+module.exports =
+{
 	type: 'officer',
 	command: 'd',
 
@@ -12,19 +20,14 @@ module.exports = {
 			const ign = args[0];
 			const player = await hypixel.getPlayer(ign);
 			const discord = await player.socialMedia.find((media) => media.id === 'DISCORD');
+			if (!discord) { unlinked(bot); }
 
-			if (!discord)
-			{
-				send(bot, '/oc Discord not linked.');
-				return;
-			}
-
-			send(bot, `/oc ${player}: @${discord.link}`);
+			send(bot, `/oc @${discord.link}`);
 		}
 		catch (e)
 		{
-			if (e.message.includes('Player does not exist'))
-			{ send(bot, '/oc Invalid IGN.'); }
+			if (e.message === Errors.PLAYER_DOES_NOT_EXIST)
+			{ send(bot, '/oc Invalid Username!'); }
 		}
 	}
 };
