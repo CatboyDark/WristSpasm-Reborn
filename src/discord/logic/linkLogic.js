@@ -1,6 +1,6 @@
 const { EmbedBuilder, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
 const fs = require('fs');
-const { welcomeRole, welcomeRoleToggle, linkedRole } = require('../../../config.json');
+const { welcomeRole, welcomeRoleToggle, linkedRole, gRole, sbRoles } = require('../../../config.json');
 const hypixel = require('../../contracts/hapi.js');
 const { Errors } = require('hypixel-api-reborn');
 
@@ -79,22 +79,18 @@ async function linkLogic(interaction)
 	{
 		await interaction.deferReply({ ephemeral: true });
 
+		// Get Items
+
 		const input = interaction.fields.getTextInputValue('linkI');
 		const player = await hypixel.getPlayer(input);
 		const discord = await player.socialMedia.find(media => media.id === 'DISCORD');
 		if (!discord) { return unLinked(interaction); }
 		if (interaction.user.username !== discord.link) { return noMatch(interaction); };
 
-		try { await interaction.member.setNickname(player.nickname); } catch (e) { if (e.message.includes('Missing Permissions')) { noPerms(interaction); console.log(e); } }
-		await interaction.member.roles.add(linkedRole);
-
-		if (welcomeRoleToggle) { if (interaction.user.roles.cache.has(welcomeRole)) { interaction.user.roles.remove(welcomeRole); } }
-
 		// Datify
 
 		const data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json', 'utf8')) : {};
 		const DataL = data.Linked || [];
-
 		const entry = DataL.find(entry => entry.dcid === interaction.user.id);
 		if (!entry)
 		{ 			
@@ -105,18 +101,46 @@ async function linkLogic(interaction)
 				ign: player.nickname
 			});
 		}
-		else if (entry.ign !== player.nickname) {
-			entry.ign = player.nickname;
-		}
-
+		else if (entry.ign !== player.nickname) { entry.ign = player.nickname; }
 		fs.writeFileSync('data.json', JSON.stringify(data, null, 4));
 
-		return success(interaction);
+		// Set Nickname + Assign linkedRole
+
+		try { await interaction.member.setNickname(player.nickname); } catch (e) { if (e.message.includes('Missing Permissions')) { noPerms(interaction); console.log(e); } }
+		if (!interaction.member.roles.cache.has(linkedRole)) { await interaction.member.roles.add(linkedRole);  }
+		if (welcomeRoleToggle) { if (interaction.user.roles.cache.has(welcomeRole)) { interaction.user.roles.remove(welcomeRole); } }
+
+		// Assign gRole
+
+		const guild = await hypixel.getGuild('player', `${player.nickname}`);
+		if (guild && guild.name === 'WristSpasm') { if (!interaction.member.roles.cache.has(gRole)) { await interaction.member.roles.add(gRole); } }
+		else { if (interaction.member.roles.cache.has(gRole)) { await interaction.member.roles.remove(gRole); } }
+
+		// Assign sbRole
+
+		const sbMember = await hypixel.getSkyblockMember(`${player.uuid}`);
+
+		let highestLevel = 0;
+		for (const [profileName, profileData] of sbMember.entries())
+		{ if (highestLevel < profileData.level) { highestLevel = profileData.level; } }
+
+		let assignedRole = sbRoles[0].roleId;
+		for (const role of sbRoles)
+		{
+			if (highestLevel >= role.level)
+			{ assignedRole = role.roleId; }
+			else { break; }
+		}
+
+		if (!interaction.member.roles.cache.has(assignedRole))
+		{ await interaction.member.roles.add(assignedRole); }
+
+		for (const sbRole of sbRoles)
+		{ if (interaction.member.roles.cache.has(sbRole.roleId) && sbRole.roleId !== assignedRole) { await interaction.member.roles.remove(sbRole.roleId); } }
+
+		success(interaction);
 	}
-	catch (e)
-	{
-		if (e.message === Errors.PLAYER_DOES_NOT_EXIST) { return invalidIGN(interaction); }
-	}
+	catch (e) { if (e.message === Errors.PLAYER_DOES_NOT_EXIST) { return invalidIGN(interaction); } }
 }
 
 module.exports = { linkMsg, linkHelpMsg, linkLogic };

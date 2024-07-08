@@ -20,7 +20,7 @@ module.exports =
 
 			if (!interaction.member.roles.cache.has(linkedRole))
 			{
-				await interaction.followUp({ embeds: [unLinked], ephemeral: true });
+				await interaction.followUp({ embeds: [unLinked] });
 				return;
 			}
 
@@ -30,7 +30,7 @@ module.exports =
 
 			if (!player)
 			{
-				await interaction.reply({ embeds: [unLinked], ephemeral: true });
+				await interaction.followUp({ embeds: [unLinked] });
 				return;
 			}
 
@@ -85,12 +85,29 @@ module.exports =
 				}
 			}
 
-			const addedRolesMap = addedRoles.length > 0 ? addedRoles.map(roleId => `<:plus:1259498381206618164> <@&${roleId}>`).join('\n') : '';
-			const removedRolesMap = removedRoles.length > 0 ? removedRoles.map(roleId => `<:minus:1259498392116133918> <@&${roleId}>`).join('\n') : '';
+			let desc;
+			if (addedRoles.length > 0 && removedRoles.length > 0)
+			{
+				desc = '**Your roles have been updated!**\n_ _\n';
+				desc += `${addedRoles.map(roleId => `<:plus:1259498381206618164> <@&${roleId}>`).join('\n')}\n_ _\n`;
+				desc += `${removedRoles.map(roleId => `<:minus:1259498392116133918> <@&${roleId}>`).join('\n')}`;
+			}
+			else if (addedRoles.length > 0)
+			{
+				desc = '**Your roles have been updated!**\n_ _\n';
+				desc += `${addedRoles.map(roleId => `<:plus:1259498381206618164> <@&${roleId}>`).join('\n')}\n_ _`;
+			}
+			else if (removedRoles.length > 0)
+			{
+				desc = '**Your roles have been updated!**\n_ _\n';
+				desc += `${removedRoles.map(roleId => `<:minus:1259498392116133918> <@&${roleId}>`).join('\n')}\n_ _`;
+			}
+			else
+			{
+				desc = '**Your roles are up to date!**';
+			}
 
-			let success = new EmbedBuilder().setColor('00FF00').setDescription(`**Your roles have been updated!**\n_ _\n${addedRolesMap}\n_ _\n${removedRolesMap}`);
-			if (addedRoles.length === 0 && removedRoles.length === 0)
-			{ success = new EmbedBuilder().setColor('00FF00').setDescription('**Your roles are up to date!**'); }
+			const success = new EmbedBuilder().setColor('00FF00').setDescription(desc);
 
 			interaction.followUp({ embeds: [success] });
 		}
