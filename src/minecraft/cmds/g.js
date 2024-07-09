@@ -60,13 +60,10 @@ module.exports =
 			const joinDate = await guild.me.joinedAtTimestamp;
 			const wGXP = await guild.me.weeklyExperience;
 
-			send(bot, `/oc ${guild.name}`);
-
 			if (args[1] === 'e')
-			{
-				setTimeout(() => { send(bot, `/oc [${rankName}] (${rankRank}) Weekly GXP: ${getWGXP(wGXP)}. Joined: ${getTime(joinDate)}.`); }, 500);
-				setTimeout(() => { send(bot, `/oc Guild Level: ${Math.floor(guild.level)}. Members: ${guild.members.length}.`); }, 1000);
-			}
+			{ send(bot, `/oc ${guild.name} Lv ${Math.floor(guild.level)} ${guild.members.length}/125 [${rankName}] (${rankRank}) Weekly GXP: ${getWGXP(wGXP)} Joined ${getTime(joinDate)}`); }
+			else
+			{ send(bot, `/oc ${guild.name}`); }
 		}
 		catch (e)
 		{
@@ -75,4 +72,3 @@ module.exports =
 		}
 	}
 };
-

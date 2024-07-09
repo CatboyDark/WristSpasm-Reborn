@@ -65,8 +65,7 @@ module.exports =
 			let assignedRole = sbRoles[0].roleId;
 			for (const role of sbRoles)
 			{
-				if (highestLevel >= role.level)
-				{ assignedRole = role.roleId; }
+				if (highestLevel >= role.level) { assignedRole = role.roleId; }
 				else { break; }
 			}
 
@@ -109,7 +108,7 @@ module.exports =
 
 			const success = new EmbedBuilder().setColor('00FF00').setDescription(desc);
 
-			interaction.followUp({ embeds: [success] });
+			return interaction.followUp({ embeds: [success] });
 		}
 		catch (e) { console.log(e); } 
 	}
