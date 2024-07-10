@@ -14,9 +14,10 @@ const staffC =
 	'rr',
 	'slink',
 	'sservers',
-	'sevent'
+	'sevent',
+	'link'
 ];
-
+	
 module.exports = 
 {
 	type: 'slash',
