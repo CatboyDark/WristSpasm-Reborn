@@ -140,7 +140,7 @@ async function linkLogic(interaction)
 
 		success(interaction);
 	}
-	catch (e) { if (e.message === Errors.PLAYER_DOES_NOT_EXIST) { return invalidIGN(interaction); } }
+	catch (e) { console.log(e); if (e.message === Errors.PLAYER_DOES_NOT_EXIST) { return invalidIGN(interaction); } }
 }
 
 module.exports = { linkMsg, linkHelpMsg, linkLogic };
