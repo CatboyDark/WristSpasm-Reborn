@@ -26,6 +26,8 @@ Created by CatboyDark on Apr 29, 2024 <br />
 
 <h2>Credits</h2><br>
 <div align="center">
+
+Note: This project values minimalism. Contributors will not recieve any credits on the frontend, with the exception of the credit section in the /help command.
   
 Based on the [WristSpasm-Discord-Bot](https://github.com/Wristspasm/Wristspasm-Discord-Bot)
 </div>
