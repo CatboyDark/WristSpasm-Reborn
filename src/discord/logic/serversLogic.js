@@ -70,7 +70,7 @@ async function cult(interaction)
 { await interaction.reply({ content: 'https://discord.gg/mining', ephemeral: true}); }
 
 async function fcouncil(interaction)
-{ await interaction.reply({ content: 'https://discord.gg/farming-council-skyblock-guides-more-1020742260683448450', ephemeral: true}); }
+{ await interaction.reply({ content: 'https://discord.gg/farmers', ephemeral: true}); }
 
 async function elitef(interaction)
 { 

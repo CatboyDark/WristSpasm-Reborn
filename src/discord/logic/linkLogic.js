@@ -28,7 +28,8 @@ const noMatch = (interaction) =>
 	return interaction.followUp({ embeds: [embed], ephemeral: true });
 };
 
-const noPerms = (interaction) => {
+const noPerms = (interaction) =>
+{
 	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Uhhhhhh Missing Perms!**');
 	interaction.followUp({ embeds: [embed], ephemeral: true });
 };
@@ -112,7 +113,7 @@ async function linkLogic(interaction)
 
 		// Assign gRole
 
-		const guild = await hypixel.getGuild('player', `${player.nickname}`);
+		const guild = await hypixel.getGuild('player', `${player.nickname}`); console.log(`guild found! : ${guild.name}`);
 		if (guild && guild.name === 'WristSpasm') { if (!interaction.member.roles.cache.has(gRole)) { await interaction.member.roles.add(gRole); } }
 		else { if (interaction.member.roles.cache.has(gRole)) { await interaction.member.roles.remove(gRole); } }
 

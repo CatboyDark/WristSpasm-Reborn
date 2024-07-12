@@ -58,7 +58,7 @@ class MCinit
 
 				if (cmd.type === type && command === cmd.command.toLowerCase()) 
 				{
-					cmd.execute(this.bot, args);
+					cmd.execute(this.bot, args, this.client);
 					return;
 				}
 			}
