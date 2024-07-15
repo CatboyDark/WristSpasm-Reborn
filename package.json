@@ -9,7 +9,7 @@
     "dependencies": {
         "discord.js": "^14.14.1",
         "git": "^0.1.5",
-        "hypixel-api-reborn": "^11.2.0",
+        "hypixel-api-reborn": "github:Hypixel-API-Reborn/hypixel-api-reborn",
         "mineflayer": "^4.20.1"
     },
     "devDependencies": {

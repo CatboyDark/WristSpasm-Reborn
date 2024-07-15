@@ -62,7 +62,7 @@ async function linkHelpMsg(interaction)
 		.setTitle('How to Link Your Account')
 		.setDescription(
 			'1. Connect to __mc.hypixel.net__.\n' +
-			'2. Once you\'re in a lobby, click your on head (2nd hotbar slot).\n' +
+			'2. Once you\'re in a lobby, click on your head (2nd hotbar slot).\n' +
 			'3. Click **Social Media**.\n' +
 			'4. Click **Discord**.\n' +
 			'5. Type your Discord username into chat.'
