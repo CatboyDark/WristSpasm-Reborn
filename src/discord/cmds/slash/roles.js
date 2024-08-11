@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
-const { linkedRole, gRole, sbRoles } = require('../../../../config.json');
+const { linkedRole, gRole, sbRoles, ironmanRole } = require('../../../../config.json');
 const hypixel = require('../../../contracts/hapi.js');
 
 const unLinked = new EmbedBuilder().setColor('FF0000').setDescription('**You are not linked!**\n_ _\nThis should not be possible. Please ask a staff member for help.');
@@ -81,6 +81,17 @@ module.exports =
 				{
 					await interaction.member.roles.remove(sbRole.roleId);
 					removedRoles.push(sbRole.roleId);
+				}
+			}
+
+			for (const [_, profileData] of sbMember.entries()) {
+				if (profileData.gameMode === "ironman") {
+				  if (profileData.level >= 25 && profileData.hotm.level >= 3) {
+					if (!interaction.member.roles.cache.has(ironmanRole)) {
+					  await interaction.member.roles.add(ironmanRole);
+					  addedRoles.push(ironmanRole);
+					}
+				  }
 				}
 			}
 
