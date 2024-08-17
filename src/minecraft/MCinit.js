@@ -1,13 +1,15 @@
 const mineflayer = require('mineflayer');
 const path = require('path');
 const fs = require('fs');
-const { ign } = require('../../auth.json');
+const { ign } = require('../../config.json');
+const { getMsg } = require('./logic/chat.js');
 
-class MCinit 
+class MC
 {
-	constructor(client) 
+	constructor(client)
 	{
-		this.instance = {
+		this.instance = 
+		{
 			host: 'mc.hypixel.net',
 			username: ign,
 			auth: 'microsoft',
@@ -16,56 +18,53 @@ class MCinit
 			chatLengthLimit: 256
 		};
 
-		this.bot = mineflayer.createBot(this.instance);
 		this.client = client;
+		this.bot = mineflayer.createBot(this.instance);
 
-		// Commands
+		this.initCmds();
+		this.initFeatures();
+		this.initLogic();
+		this.login();
+	}
 
-		const cDir = path.join(__dirname, 'cmds');
-		const cFiles = fs.readdirSync(cDir).filter((file) => file.endsWith('.js'));
+	initCmds() 
+	{
+		this.cDir = path.join(__dirname, 'cmds');
+		this.cFiles = fs.readdirSync(this.cDir).filter(file => file.endsWith('.js'));
+		this.cList = new Map();
 
-		this.bot.on('message', (message) => 
+		for (const c of this.cFiles) 
 		{
-			const content = message.toString();
-
-			if (content.startsWith('Officer >')) 
+			const cp = path.join(this.cDir, c);
+			const cmd = require(cp);
+			if (cmd.command) 
 			{
-				const msg = getMsg(content.slice(10).trim());
-				if (msg) cmds('officer', msg);
+				this.cList.set(cmd.command.toLowerCase(), cmd);
 			}
-			else if (content.startsWith('Guild >')) 
-			{
-				const msg = getMsg(content.slice(8).trim());
-				if (msg) cmds('guild', msg);
-			}
-		});
+		}
 
-		const getMsg = (message) =>
+		this.bot.on('message', message => 
 		{
-			const match = message.match(/^[^:]+: (.*)$/);
-			return match ? match[1] : null;
-		};
-
-		const cmds = (type, content) => 
-		{
-			const args = content.split(/ +/);
-			const command = args.shift().toLowerCase();
-
-			for (const c of cFiles) 
+			const { chat, rank, guildRank, sender, content } = getMsg(message.toString());
+			if (!content) return;
+		
+			const [commandName, ...args] = content.split(/ +/);
+			const command = commandName.toLowerCase();
+			
+			if (this.cList.has(command)) 
 			{
-				const cp = path.join(cDir, c);
-				const cmd = require(cp);
-
-				if (cmd.type === type && command === cmd.command.toLowerCase()) 
+				const cmd = this.cList.get(command);
+				if (cmd.chat.includes(chat) || (chat === 'staff' && cmd.chat.includes('guild'))) 
 				{
-					cmd.execute(this.bot, args, this.client);
-					return;
+					const msg = { chat, rank, guildRank, sender, content, args };
+					cmd.execute(this.client, msg);
 				}
 			}
-		};
-
-		// Features
-
+		});
+	}
+	
+	initFeatures()
+	{
 		const fDir = path.join(__dirname, 'features');
 		const fFiles = fs.readdirSync(fDir).filter((file) => file.endsWith('.js'));
 
@@ -73,71 +72,69 @@ class MCinit
 		{
 			const fp = path.join(fDir, f);
 			const feature = require(fp);
-			if (typeof feature === 'function')
-			{ feature(this.bot, this.client); }
-			else { console.error(`Feature at ${fp} is not a function.`); }
+			if (typeof feature === 'function') feature(this.bot, this.client);
+			else console.error(`Feature at ${fp} is not a function.`);
 		}
+	}
 
-		// Logic
-
+	initLogic()
+	{
 		this.Logic = {};
 		const lDir = path.join(__dirname, './logic');
-		const lFiles = fs
-			.readdirSync(lDir)
-			.filter((file) => file.endsWith('.js'));
+		const lFiles = fs.readdirSync(lDir).filter((file) => file.endsWith('.js'));
 
 		for (const file of lFiles) 
 		{
 			const logicModule = require(path.join(lDir, file));
-			if (typeof logicModule === 'object' && logicModule !== null) 
-			{ Object.assign(this.Logic, logicModule); }
-			else { this.Logic[file.replace('.js', '')] = logicModule; }
+			if (typeof logicModule === 'object' && logicModule !== null) Object.assign(this.Logic, logicModule);
+			else this.Logic[file.replace('.js', '')] = logicModule;
 		}
 	}
 
-	login() 
+	login()
 	{
-		this.bot.on('login', () => 
+		this.bot.on('login', this.onLogin.bind(this));
+		this.bot.on('kicked', this.onKick.bind(this));
+		this.bot.on('error', this.onError.bind(this));
+		this.bot.on('end', this.onEnd.bind(this));
+	}
+
+	onLogin() 
+	{
+		const { server, _host } = this.bot._client.socket;
+		console.log(`${this.instance.username} has joined ${server || _host}.`);
+		this.Logic.limbo(this.bot);
+	}
+
+	onKick(reason) 
+	{
+		console.log(`Kicked: ${reason}`);
+		this.reconnect();
+	}
+
+	onError(error) 
+	{
+		console.error(`Error: ${error.message}`);
+	}
+
+	onEnd() 
+	{
+		console.log(`${this.instance.username} has disconnected.`);
+		this.reconnect();
+	}
+
+	reconnect() {
+		console.log('Attempting to reconnect in 10 seconds...');
+		setTimeout(() => 
 		{
-			const botSocket = this.bot._client.socket;
-			console.log(`${this.instance.username} has joined ${botSocket.server ? botSocket.server : botSocket._host}.`);
-
-			this.Logic.limbo(this.bot);
-		});
-
-		this.bot.on('kicked', (reason) => 
-		{
-			console.log(`Kicked: ${reason}`);
-			console.log('Attempting to reconnect in 10 seconds...');
-
-			setTimeout(() => 
+			this.bot = mineflayer.createBot(this.instance);
+			this.bot.once('spawn', () => 
 			{
-				this.bot = mineflayer.createBot(this.instance);
-				this.bot.once('spawn', () => 
-				{
-					console.log('Reconnected.');
-					this.Logic.limbo(this.bot);
-				});
-			}, 10000);
-		});
-
-		this.bot.on('error', console.log);
-
-		this.bot.on('end', () => 
-		{
-			console.log(`${this.instance.username} has disconnected.`);
-			console.log('Attempting to reconnect in 10 seconds...');
-
-			setTimeout(() => 
-			{
-				this.bot = mineflayer.createBot(this.instance);
-				this.bot.once('spawn', () => 
-				{
-					console.log('Reconnected.');
-				});
-			}, 10000);
-		});
+				console.log('Reconnected.');
+				this.Logic.limbo(this.bot);
+			});
+		}, 10000);
 	}
 }
 
-module.exports = MCinit;
+module.exports = MC;

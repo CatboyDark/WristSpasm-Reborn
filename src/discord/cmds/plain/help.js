@@ -1,12 +1,14 @@
-const slashHelp = require('../slash/help.js');
+const { createMsg } = require('../../../helper/builder.js');
 
 module.exports = 
 {
 	type: 'plain',
 	name: '.h',
 
-	execute(message) 
+	async execute(message) 
 	{
-		slashHelp.execute(message);
+		const embed = createMsg({ desc: '**Super Secret Staff Commands owo**' });
+		
+		await message.channel.send({ embeds: [embed] });
 	}
 };

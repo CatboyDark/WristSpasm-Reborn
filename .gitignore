@@ -1,6 +1,4 @@
 node_modules
 eslint.config.js
-auth.json
+.vscode
 config.json
-data.json
-ignore.json

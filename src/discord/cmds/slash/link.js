@@ -1,100 +1,80 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const fs = require('fs');
-const { welcomeRole, welcomeRoleToggle, linkedRole, gRole, sbRoles } = require('../../../../config.json');
+const { createSlash, createError, createMsg } = require('../../../helper/builder.js');
+const { getEmoji, getPlayer, getDiscord, updateRoles } = require('../../../helper/utils.js');
+const { Link } = require('../../../mongo/schemas.js');
+const Errors = require('hypixel-api-reborn');
 
-const hypixel = require('../../../contracts/hapi.js');
-const { Errors } = require('hypixel-api-reborn');
+const notLinked = createError('**Discord is not linked!**\n_ _\nClick on **How To Link** for more info.');
+const noMatch = createError('**Discord does not match!**\n_ _\nClick on **How To Link** for more info.');
+const invalidIGN = createError('**Invalid Username!**');
 
-const success = (interaction) =>
-{
-	const embed = new EmbedBuilder().setColor('00FF00').setDescription('<:gcheck:1244687091162415176> **Account linked!**');
-	interaction.followUp({ embeds: [embed], ephemeral: true });
-};
-
-const invalidIGN = (interaction) => 
-{
-	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Invalid Username!**');
-	return interaction.followUp({ embeds: [embed], ephemeral: true });
-};
-
-const noPerms = (interaction) => {
-	const embed = new EmbedBuilder().setColor('FF0000').setDescription('**Uhhhhhh Missing Perms!**');
-	interaction.followUp({ embeds: [embed], ephemeral: true });
-};
-
-module.exports = 
-{
-	type: 'slash',
-	data: new SlashCommandBuilder()
-		.setName('link')
-		.setDescription('Link override')
-		.addUserOption(option => option.setName('discord').setDescription('Discord').setRequired(true))
-		.addStringOption(option => option.setName('ign').setDescription('IGN').setRequired(true)),
-
+module.exports = createSlash({
+	name: 'link',
+	desc: 'Link your account',
+	options: [
+		{ type: 'string', name: 'ign', desc: 'Enter your IGN', required: true }
+	],
+    
 	async execute(interaction) 
 	{
+		await interaction.deferReply();
+
+		const input = interaction.options.getString('ign');
+		const check = await getEmoji('check');
+		const plus = await getEmoji('plus');
+		const minus = await getEmoji('minus');
+
 		try
 		{
-			await interaction.deferReply({ ephemeral: true });
+			const player = await getPlayer(input);
+			const discord = await getDiscord(player.uuid);
+			if (!discord) 
+				return interaction.followUp({ embeds: [notLinked] });
+			if (interaction.user.username !== discord) 
+				return interaction.followUp({ embeds: [noMatch] });
 
-			const discord = await interaction.guild.members.fetch(interaction.options.getUser('discord').id);
-			const ign = interaction.options.getString('ign');
+			await Link.create({ uuid: player.uuid, dcid: interaction.user.id })
+				.catch((e) => { if (e.code === 11000) console.log('playersLinked: Duplicate Key!'); });
 
-			const player = await hypixel.getPlayer(ign);
-
-			// Datify
-
-			const data = fs.existsSync('data.json') ? JSON.parse(fs.readFileSync('data.json', 'utf8')) : {};
-			const DataL = data.Linked || [];
-			const entry = DataL.find(entry => entry.dcid === discord.id);
-			if (!entry)
-			{ 			
-				DataL.push
-				({
-					dcid: discord.id,
-					uuid: player.uuid,
-					ign: player.nickname
-				});
-			}
-			else if (entry.ign !== player.nickname) { entry.ign = player.nickname; }
-			fs.writeFileSync('data.json', JSON.stringify(data, null, 4));
-
-			// Set Nickname + Assign linkedRole
-
-			try { await discord.setNickname(player.nickname); } catch (e) { if (e.message.includes('Missing Permissions')) { noPerms(interaction); console.log(e); } }
-			if (!discord.roles.cache.has(linkedRole)) { await discord.roles.add(linkedRole);  }
-			if (welcomeRoleToggle) { if (discord.user.roles.cache.has(welcomeRole)) { discord.user.roles.remove(welcomeRole); } }
-
-			// Assign gRole
-
-			const guild = await hypixel.getGuild('player', `${player.nickname}`);
-			if (guild && guild.name === 'WristSpasm') { if (!discord.roles.cache.has(gRole)) { await discord.roles.add(gRole); } }
-			else { if (discord.roles.cache.has(gRole)) { await discord.roles.remove(gRole); } }
-
-			// Assign sbRole
-
-			const sbMember = await hypixel.getSkyblockMember(`${player.uuid}`);
-
-			let highestLevel = 0;
-			for (const [profileName, profileData] of sbMember.entries())
-			{ if (highestLevel < profileData.level) { highestLevel = profileData.level; } }
-
-			let assignedRole = sbRoles[0].roleId;
-			for (const role of sbRoles)
+			try 
 			{
-				if (highestLevel >= role.level)
-				{ assignedRole = role.roleId; }
-				else { break; }
+				await interaction.member.setNickname(player.nickname);
+			} 
+			catch (e) 
+			{
+				if (e.message.includes('Missing Permissions')) 
+					interaction.followUp({ embeds: [createMsg({ color: 'FFA500', desc: '**Silly! I cannot change the nickname of the server owner!**' })] });
 			}
-
-			if (!discord.roles.cache.has(assignedRole))
-			{ await discord.roles.add(assignedRole); }
-
-			for (const sbRole of sbRoles)
-			{ if (discord.roles.cache.has(sbRole.roleId) && sbRole.roleId !== assignedRole) { await discord.roles.remove(sbRole.roleId); } }
-
-			success(interaction);
+	
+			const { addedRoles, removedRoles } = await updateRoles(interaction, player);
+	
+			let desc;
+			if (addedRoles.length > 0 && removedRoles.length > 0) 
+			{
+				desc = `${check} **Account linked!**\n_ _\n`;
+				desc += `${addedRoles.map(roleID => `${plus} <@&${roleID}>`).join('\n')}\n_ _\n`;
+				desc += `${removedRoles.map(roleID => `${minus} <@&${roleID}>`).join('\n')}`;
+			} 
+			else if (addedRoles.length > 0) 
+			{
+				desc = `${check} **Account linked!**\n_ _\n`;
+				desc += `${addedRoles.map(roleID => `${plus} <@&${roleID}>`).join('\n')}\n_ _`;
+			} 
+			else if (removedRoles.length > 0) 
+			{
+				desc = `${check} **Account linked!**\n_ _\n`;
+				desc += `${removedRoles.map(roleID => `${minus} <@&${roleID}>`).join('\n')}\n_ _`;
+			} 
+			else 
+			{
+				desc = `${check} **Account linked!**`;
+			}
+	
+			return interaction.followUp({ embeds: [createMsg({ desc: desc })] });
 		}
-		catch (e) { console.log(e); if (e.message === Errors.PLAYER_DOES_NOT_EXIST) { return invalidIGN(interaction); } } 
+		catch (e)
+		{
+			if (e.message === Errors.PLAYER_DOES_NOT_EXIST) { return interaction.followUp({ embeds: [invalidIGN] }); }
+			console.log(e); 
+		}
 	}
-};
+});

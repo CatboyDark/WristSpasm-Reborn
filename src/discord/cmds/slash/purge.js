@@ -1,55 +1,44 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { createMsg, createSlash } = require('../../../helper/builder');
 
-const countCheck = (interaction, count) => 
-{
-	const posNum = new EmbedBuilder().setColor('FF0000').setDescription('**You must purge at least one message!**');
-	const msgLimit = new EmbedBuilder().setColor('FF0000').setDescription('**You can only purge up to 100 messages!**');
-
-	if (count < 1) { interaction.reply({ embeds: [posNum], ephemeral: true }); return true; }
-	if (count > 100) { interaction.reply({ embeds: [msgLimit], ephemeral: true }); return true; }
-	return false;
-};
-
-const ageCheck = (interaction) =>
-{
-	const ageLimit = new EmbedBuilder().setColor('FF0000').setDescription('**You cannot purge messages older than 14 days!**');
-	return error => { if (error.code === 50034) { interaction.reply({ embeds: [ageLimit], ephemeral: true}); }};
-};
-
-module.exports = 
-{
-	type: 'slash',
-	data: new SlashCommandBuilder()
-		.setName('purge')
-		.setDescription('Purge messages')
-		.addIntegerOption(option => option.setName('count').setDescription('Number of messages').setRequired(true))
-		.addStringOption(option => option.setName('filter').setDescription('User OR bot messages').addChoices(
-			{ name: 'Bot Messages', value: 'bot'},
-			{ name: 'User Messages', value: 'user'})
-			.setRequired(false))
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+module.exports = createSlash({
+	name: 'purge',
+	desc: 'Purge messages',
+	options: [
+		{ type: 'integer', name: 'count', desc: 'Number of messages', required: true },
+		{ type: 'string', name: 'filter', desc: 'User OR bot messages', choices: [
+			{ name: 'Bot Messages', value: 'bot' },
+			{ name: 'User Messages', value: 'user' }
+		]}
+	],
+	permissions: ['ManageMessages'],
 
 	async execute(interaction) 
 	{
 		const filter = interaction.options.getString('filter');
 		const count = interaction.options.getInteger('count');
+        
+		if (count < 1) return interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**You must purge at least one message!**' })], ephemeral: true });
+		if (count > 100) return interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**You can only purge up to 100 messages!**' })], ephemeral: true });
 
-		if (countCheck(interaction, count)) return;
-		let msg = await interaction.channel.messages.fetch({ limit: count });
+		let messages = await interaction.channel.messages.fetch({ limit: count });
 
-		let success;
-		if (msg.size === 1) { success = new EmbedBuilder().setColor('00FF00').setDescription('**Deleted a message.**'); }
+		if (filter === 'user') messages = messages.filter(msg => !msg.author.bot);
+		if (filter === 'bot') messages = messages.filter(msg => msg.author.bot);
+
+		const now = Date.now();
+		messages = messages.filter(msg => (now - msg.createdTimestamp) <= 1209600000);
+
+		if (messages.size > 0) 
+		{
+			await interaction.channel.bulkDelete(messages, true);
+			const success = count === 1 
+				? createMsg({ desc: '**Deleted a message.**' })
+				: createMsg({ desc: `**Deleted ${messages.size} ${filter === 'user' ? 'user' : filter === 'bot' ? 'bot' : ''} messages.**` });
+			await interaction.reply({ embeds: [success], ephemeral: true });
+		} 
 		else 
-		{ 
-			const f = filter === 'user' ? 'user' : (filter === 'bot' ? 'bot' : '');
-			success = new EmbedBuilder().setColor('00FF00').setDescription(`**Deleted ${msg.size} ${f} messages.**`);
+		{
+			await interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**You cannot purge messages older than 14 days!**' })], ephemeral: true });
 		}
-
-		if (filter === 'user') { msg = msg.filter(msg => !msg.author.bot); } 
-		if (filter === 'bot') { msg = msg.filter(msg => msg.author.bot);}
-
-		await interaction.channel.bulkDelete(msg)
-			.then(() => interaction.reply({ embeds: [success], ephemeral: true }))
-			.catch(ageCheck(interaction));
 	}
-};
+});
