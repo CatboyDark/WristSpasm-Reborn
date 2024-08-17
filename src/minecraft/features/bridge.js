@@ -15,7 +15,7 @@ module.exports = (bot, client) =>
 
 		const fContent = content.replace(/<@/g, '<@\u200B').replace(/<#/g, '<#\u200B').replace(/<:/g, '<:\u200B').replace(/<a/g, '<a\u200B').replace(/@everyone/g, '@ everyone').replace(/@here/g, '@ here');
 		
-		const channel = client.channels.cache.get(config.bridgeChannel);
+		const channel = client.channels.cache.get(config.features.bridgeChannel);
 		channel.send(`${fContent}`);
 	});
 
@@ -23,7 +23,7 @@ module.exports = (bot, client) =>
 	{
 		if (!config.features.bridgeToggle) return;
 
-		const channel = client.channels.cache.get(config.bridgeChannel);
+		const channel = client.channels.cache.get(config.features.bridgeChannel);
 		if (message.channel.id === channel?.id) 
 		{
 			const content = message.content;
