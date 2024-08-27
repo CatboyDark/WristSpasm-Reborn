@@ -1,6 +1,8 @@
-const { createMsg, createRow } = require('../../../helper/builder.js');
+const { createMsg, createRow, createError } = require('../../../helper/builder.js');
 const { readConfig, toggleConfig } = require('../../../helper/utils.js');
 
+const noWelcomeChannel = createError('**You need to set a Welcome Channel first!**');
+const noWelcomeRole = createError('**You need to set a Welcome Role first!**');
 
 const welcomeMsg = createMsg({
 	title: 'Welcome',
@@ -25,7 +27,7 @@ async function createButtons()
 	const welcomeMsgButtons = createRow([
 		{ id: 'welcomeMsgToggle', label: 'Enable Welcome Message', style: config.features.welcomeMsgToggle },
 		{ id: 'setWelcomeChannel', label: 'Set Channel', style: 'Blue' },
-		{ id: 'setwelcomeMsg', label: 'Set Message', style: 'Blue' }
+		{ id: 'setWelcomeMsg', label: 'Set Message', style: 'Blue' }
 	]);
 
 	const welcomeRoleButtons = createRow([
@@ -50,7 +52,7 @@ async function welcome(interaction)
 	case 'welcomeMsgToggle':
 		if (!config.features.welcomeChannel) 
 		{
-			await interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**You need to set a Welcome Channel first!**' })], ephemeral: true });
+			await interaction.reply({ embeds: [noWelcomeChannel], ephemeral: true });
 			return false;
 		}
 		await toggleConfig('features.welcomeMsgToggle');
@@ -59,7 +61,7 @@ async function welcome(interaction)
 	case 'welcomeRoleToggle':
 		if (!config.features.welcomeRole) 
 		{
-			await interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**You need to set a Welcome Role first!**' })], ephemeral: true });
+			await interaction.reply({ embeds: [noWelcomeRole], ephemeral: true });
 			return false;
 		}
 		await toggleConfig('features.guildRoleToggle');
@@ -68,12 +70,12 @@ async function welcome(interaction)
 	case 'removeRoleOnLink':
 		if (!config.features.welcomeRoleToggle) 
 		{
-			await interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**You don\'t have Welcome Role enabled!**' })], ephemeral: true });
+			await interaction.reply({ embeds: [noWelcomeRole], ephemeral: true });
 			return false;
 		}
 		if (!config.features.welcomeRole)
 		{
-			await interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**You need to set a Welcome Role first!**' })], ephemeral: true });
+			await interaction.reply({ embeds: [noWelcomeRole], ephemeral: true });
 			return false;
 		}
 		break;

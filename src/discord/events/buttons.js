@@ -6,21 +6,20 @@ const map = // Exceptions
 {
 	'logging': ['logsToggle', 'logCommandsToggle', 'logButtonsToggle', 'logMenusToggle', 'logFormsToggle' ],
 	'welcome': ['welcomeMsgToggle', 'welcomeRoleToggle', 'removeRoleOnLink' ],
-	'accountLinking': ['linkRoleToggle', 'guildRoleToggle']
+	'accountLinking': ['linkRoleToggle', 'guildRoleToggle'],
+	'guildRanksToggle': ['guildRank1', 'guildRank2', 'guildRank3', 'guildRank4', 'guildRank5']
 };
 
 const Logic = readLogic();
 
-const buttonHandler = Object.keys(Logic).reduce((acc, logicName) => {
+const buttonHandler = Object.keys(Logic).reduce((acc, logicName) => 
+{
 	acc[logicName] = Logic[logicName];
 
-	// Map all button IDs associated with this logicName
-	for (const [exceptionLogic, buttonIds] of Object.entries(map)) {
-		if (exceptionLogic === logicName) {
-			buttonIds.forEach(buttonId => {
-				acc[buttonId] = Logic[exceptionLogic]; // Map button ID to the handler function
-			});
-		}
+	for (const [exceptionLogic, buttonIds] of Object.entries(map)) 
+	{
+		if (exceptionLogic === logicName) 
+			buttonIds.forEach(buttonId => { acc[buttonId] = Logic[exceptionLogic]; });
 	}
 
 	return acc;
@@ -41,13 +40,17 @@ module.exports =
 			if (handler) await handler(interaction);
 			else 
 			{
-				const mappedLogic = map[customId];
-				if (mappedLogic) 
+				const exceptionLogic = Object.keys(map).find(logic => map[logic].includes(customId));
+
+				if (exceptionLogic) 
 				{
-					if (Logic[mappedLogic]) console.warn(`${customId} mapped to ${mappedLogic} does not exist!`);
-					else console.warn(`Logic for ${customId} (${mappedLogic}) does not exist!`);
+					if (!Logic[exceptionLogic])
+						console.warn(`Logic for ${customId} (${exceptionLogic}) does not exist!`);
 				} 
-				else console.warn(`Logic for ${customId} does not exist!`);
+				else 
+				{
+					console.warn(`Logic for ${customId} does not exist!`);
+				}
 			}
 		}
 	}

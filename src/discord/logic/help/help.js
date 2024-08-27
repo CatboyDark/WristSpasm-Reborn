@@ -1,14 +1,14 @@
 const { PermissionFlagsBits } = require('discord.js');
-const { createMsg, createRow } = require('../../helper/builder.js');
+const { createMsg, createRow } = require('../../../helper/builder.js');
 const fs = require('fs');
 const path = require('path');
-const { readConfig } = require('../../helper/utils.js');
+const { readConfig } = require('../../../helper/utils.js');
 
 async function createHelpMsg(interaction) 
 {
 	const config = readConfig();
 
-	const cmdsDirectory = path.join(__dirname, '..', 'cmds', 'slash');
+	const cmdsDirectory = path.join(__dirname, '..', '..', 'cmds', 'slash');
 	const cmds = fs.readdirSync(cmdsDirectory)
 		.map(file => require(path.join(cmdsDirectory, file)))
 		.filter(command => command && command.type && command.data);
@@ -64,20 +64,6 @@ async function createHelpMsg(interaction)
 	});
 }
 
-
-function ingameCmds()
-{
-	const config = readConfig();
-
-	return createMsg({
-		icon: config.icon,
-		title: config.guild,
-		desc: '**Ingame Commands**',
-		footer: 'Created by @CatboyDark',
-		footerIcon: 'https://i.imgur.com/4lpd01s.png'
-	});
-}
-
 const helpButtons = createRow([
 	{id: 'MCcmds', label: 'Ingame Commands', style: 'Green'},
 	{id: 'credits', label: 'Credits', style: 'Blue'},
@@ -88,67 +74,15 @@ const helpButtons = createRow([
 async function cmds(interaction) 
 {
 	const embed = await createHelpMsg(interaction);
-	await interaction.update({ embeds: [embed], components: [helpButtons] });
+
+	if (interaction.isCommand()) 
+		await interaction.reply({ embeds: [embed], components: [helpButtons] });
+	else if (interaction.isButton())
+		await interaction.update({ embeds: [embed], components: [helpButtons] });
+	
 }
 
-async function MCcmds(interaction) 
-{
-	interaction.update({ embeds: [ingameCmds()], components: [createRow([
-		{id: 'cmds', label: 'Commands', style: 'Green'},
-		{id: 'credits', label: 'Credits', style: 'Blue'},
-		{id: 'support', label: 'Support', style: 'Blue'},
-		{label: 'GitHub', url: 'https://github.com/CatboyDark/Eris'}
-	])] });
-}
-
-async function credits(interaction) 
-{
-	const config = readConfig();
-	const creditsMsg = createMsg({
-		icon: config.icon,
-		title: config.guild,
-		desc:
-            '**Credits**\n\n' +
-            '✦ <@1165302964093722697> ✦\n' +
-			'✦ <@486155512568741900> ✦\n' +
-			'✦ <@1169174913832202306> ✦\n' +
-			'✦ <@468043261911498767> ✦\n\n_ _',
-		footer: 'Created by @CatboyDark',
-		footerIcon: 'https://i.imgur.com/4lpd01s.png'
-	});
-
-	const buttons = createRow([
-		{ id: 'cmds', label: 'Commands', style: 'Green' },
-		{ id: 'credits', label: 'Credits', style: 'Blue' },
-		{ id: 'support', label: 'Support', style: 'Blue' },
-		{label: 'GitHub', url: 'https://github.com/CatboyDark/Eris'}
-	]);
-
-	interaction.update({ embeds: [creditsMsg], components: [buttons] });
-}
-
-async function support(interaction) 
-{
-	const config = readConfig();
-	const supportMsg = createMsg({
-		icon: config.icon,
-		title: config.guild,
-		desc:
-            '**Bugs and Support  ❤**\n\n' +
-            'Please contact <@622326625530544128> for support!\n' +
-            'To report any bugs or suggestions, check out our GitHub!\n\n_ _',
-		footer: 'Created by @CatboyDark',
-		footerIcon: 'https://i.imgur.com/4lpd01s.png'
-	});
-
-	const buttons = createRow([
-		{ id: 'cmds', label: 'Commands', style: 'Green' },
-		{ id: 'credits', label: 'Credits', style: 'Blue' },
-		{ id: 'support', label: 'Support', style: 'Blue' },
-		{label: 'GitHub', url: 'https://github.com/CatboyDark/Eris'}
-	]);
-
-	interaction.update({ embeds: [supportMsg], components: [buttons] });
-}
-
-module.exports = { createHelpMsg, helpButtons, cmds, MCcmds, credits, support };
+module.exports = 
+{ 
+	cmds
+};

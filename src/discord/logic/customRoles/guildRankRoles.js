@@ -1,19 +1,32 @@
-const { createMsg, createRow, createModal } = require('../../../helper/builder.js');
-const { readConfig, getGuild, toggleConfig } = require('../../../helper/utils');
+const { createMsg, createRow, createModal, createError } = require('../../../helper/builder.js');
+const { readConfig, getGuild, toggleConfig, writeConfig } = require('../../../helper/utils');
 
-async function getGuildRanks() {
+const invalidRole = createError('**That\'s not a valid Role ID!**');
+
+async function getGuildRanks() 
+{
 	const config = readConfig();
 	const guild = await getGuild('guild', config.guild);
-	if (guild) {
-		const guildRanks = guild.ranks.map(rank => rank.name);
-		return guildRanks;
-	}
-	return [];
+
+	const guildRanks = guild.ranks.map(rank => rank.name);
+	return guildRanks;
 }
 
-async function createGuildRankRolesMsg() {
+async function createGuildRankRolesMsg()
+{
 	const guildRanks = await getGuildRanks();
-	const roles = guildRanks.map((rank, index) => `${index + 1}. ${rank}`).join('\n');
+	const config = readConfig();
+
+	const roles = guildRanks.map((rank, index) => 
+	{
+		const rankNum = index + 1;
+		const roleKey = `guildRank${rankNum}Role`;
+
+		if (config.guildRankRoles[roleKey]) 
+			return `${rankNum}. ${rank} - <@&${config.guildRankRoles[roleKey]}>`;
+		else
+			return `${rankNum}. ${rank}`;
+	}).join('\n');
 
 	return createMsg({
 		title: 'Custom Roles: Guild Ranks',
@@ -21,24 +34,24 @@ async function createGuildRankRolesMsg() {
 	});
 }
 
-async function createButtons() {
+async function createButtons() 
+{
 	const guildRanks = await getGuildRanks();
 	const config = readConfig();
 
-	const buttons = guildRanks.map((rank, index) => {
+	const buttons = guildRanks.map((rank, index) => 
+	{
 		const id = `guildRank${index + 1}`;
 		const style = config.features[`guildRank${index + 1}Toggle`] ? 'Green' : 'Red';
-		return {
-			id,
-			label: rank,
-			style
-		};
+
+		return { id, label: rank, style };
 	});
 
 	return createRow(buttons);
 }
 
-function back() {
+function back() 
+{
 	const config = readConfig();
 	const buttons = createRow([
 		{ id: 'customRoles', label: 'Back', style: 'Gray' },
@@ -48,42 +61,66 @@ function back() {
 	return buttons;
 }
 
-async function handleGuildRankToggle(interaction) {
-	const rankNumber = interaction.customId.replace('guildRank', '');
-	const featureToggleKey = `features.guildRank${rankNumber}Toggle`;
+async function guildRankRoles(interaction)
+{
+	await interaction.update({ embeds: [await createGuildRankRolesMsg()], components: [await createButtons(), back()] });
+}
 
-	// Check if the rank is not enabled and show the modal
+async function guildRanksToggle(interaction) 
+{
 	const config = readConfig();
-	if (!config.features[`guildRank${rankNumber}Toggle`]) {
+	const rankNum = interaction.customId;
+	const guildRanks = await getGuildRanks();
+	const rankName = guildRanks[rankNum.replace('guildRank', '') - 1];
+	const toggleKey = `${rankNum}Toggle`;
+	const roleKey = `${rankNum}Role`;
+
+	if (interaction.isButton() && !config.features[toggleKey]) 
+	{
 		const modal = createModal({
-			id: `guildRank${rankNumber}Form`,
-			title: `Set ${await getGuildRanks()[rankNumber - 1]}`,
+			id: rankNum,
+			title: `Set ${rankName}`,
 			components: [{
-				id: `guildRank${rankNumber}Input`,
-				label: `ENTER ROLE ID FOR ${await getGuildRanks()[rankNumber - 1]}`,
+				id: `${rankNum}Input`,
+				label: `ENTER ROLE ID FOR ${rankName}:`,
 				style: 'short',
 				required: true
 			}]
 		});
 
 		await interaction.showModal(modal);
-	} else {
-		await toggleConfig(featureToggleKey);
+		return;
+	}
+
+	if (interaction.isModalSubmit()) 
+	{
+		const input = interaction.fields.getTextInputValue(`${rankNum}Input`);
+		const role = interaction.guild.roles.cache.get(input);
+		if (!role) return interaction.reply({ embeds: [invalidRole], ephemeral: true });
+
+		config.guildRankRoles[roleKey] = input;
+		writeConfig(config);
+		await toggleConfig(`features.${toggleKey}`);
+		await guildRankRoles(interaction);
+		return;
+	}
+
+	if (config.features[toggleKey]) 
+	{
+		await toggleConfig(`features.${toggleKey}`);
 		await guildRankRoles(interaction);
 	}
 }
 
-async function guildRankRolesToggle(interaction) {
+async function guildRankRolesToggle(interaction) 
+{
 	await toggleConfig('features.guildRankRolesToggle');
 	await guildRankRoles(interaction);
 }
 
-async function guildRankRoles(interaction) {
-	await interaction.update({ embeds: [await createGuildRankRolesMsg()], components: [await createButtons(), back()] });
-}
-
-module.exports = {
+module.exports = 
+{
 	guildRankRoles,
-	handleGuildRankToggle,
+	guildRanksToggle,
 	guildRankRolesToggle
 };

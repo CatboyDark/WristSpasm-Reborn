@@ -1,8 +1,8 @@
-const { createMsg, createSlash } = require('../../../helper/builder');
+const { createMsg, createSlash, createError } = require('../../../helper/builder');
 
-const minCount = createMsg({ color: 'FF0000', desc: '**You must purge at least one message!**' });
-const maxCount = createMsg({ color: 'FF0000', desc: '**You can only purge up to 100 messages!**' });
-const ageLimit = createMsg({ color: 'FF0000', desc: '**You cannot purge messages older than 14 days!**' });
+const minCount = createError('You must purge at least one message!');
+const maxCount = createError('You can only purge up to 100 messages!');
+const ageLimit = createError('You cannot purge messages older than 14 days!');
 
 module.exports = createSlash({
 	name: 'purge',

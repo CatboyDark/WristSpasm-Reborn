@@ -13,11 +13,12 @@ function getMsg(message)
 			content = match[3];
 		}
 	} 
+
 	else if (message.startsWith('Guild >')) 
 	{
 		chat = 'guild';
 		const match = message.match(/^Guild >(?: \[(.*?)\])? (.*?) \[(.*?)\]: (.*)$/);
-		if (match) 
+		if (match)
 		{
 			rank = match[1] || null;
 			guildRank = match[3] || 'GM';
@@ -25,17 +26,18 @@ function getMsg(message)
 			content = match[4];
 		}
 	} 
+
 	else if (message.startsWith('Party >')) 
 	{
 		chat = 'party';
 		const match = message.match(/^Party >(?: \[(.*?)\])? (.*?): (.*)$/);
-		if (match) 
-		{
+		if (match){
 			rank = match[1] || null;
 			sender = match[2];
 			content = match[3];
 		}
 	} 
+
 	else if (message.startsWith('Officer >')) 
 	{
 		chat = 'staff';
@@ -51,7 +53,6 @@ function getMsg(message)
 
 	return { chat, rank, guildRank, sender, content };
 }
-
 
 function send(bot, str)
 {

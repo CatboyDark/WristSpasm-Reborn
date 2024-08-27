@@ -39,7 +39,8 @@ module.exports = createSlash({
 		}
 		catch (e)
 		{
-			if (e.message === Errors.PLAYER_DOES_NOT_EXIST) { return interaction.followUp({ embeds: [invalidIGN] }); }
+			if (e.message === Errors.PLAYER_DOES_NOT_EXIST)
+				return interaction.followUp({ embeds: [invalidIGN] });
 			console.log(e); 
 		}
 	}

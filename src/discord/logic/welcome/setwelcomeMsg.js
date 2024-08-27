@@ -23,8 +23,10 @@ async function setWelcomeMsg(interaction)
 	const config = readConfig();
 	config.features.welcomeMsg = input;
 	writeConfig(config);
+	
 	let welcomeMsg = config.features.welcomeMsg || `### Welcome to the ${config.guild} server!\n### <@${interaction.user.id}>`;
 	welcomeMsg = welcomeMsg.replace(/@member/g, `<@${interaction.user.id}>`);
+
 	interaction.reply({ embeds: [createMsg({ desc: '**Welcome Message has been updated!**' }), createMsg({ desc: welcomeMsg, icon: interaction.user.avatarURL() })], ephemeral: true });
 }
 

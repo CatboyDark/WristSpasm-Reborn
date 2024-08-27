@@ -18,6 +18,11 @@ const linkSchema = new mongoose.Schema({
 
 linkSchema.index({ uuid: 1, dcid: 1 }, { unique: true });
 
+const pinsSchema = new mongoose.Schema({
+	channelId: { type: String, required: true, unique: true },
+	pinnedMessages: { type: [String], default: [] }
+}, { collection: 'serverPins' });
+
 const gxpSchema = new mongoose.Schema({
 	uuid: { type: String, required: true, unique: true },
 	entries: [{
@@ -26,29 +31,17 @@ const gxpSchema = new mongoose.Schema({
 	}]
 }, { collection: 'gxpLog' });
 
-const inactivitySchema = new mongoose.Schema({
-	dcid: { type: String, required: true },
-	reason: { type: String, required: true }
-}, { collection: 'inactivityList' });
-
-const pinsSchema = new mongoose.Schema({
-	channelId: { type: String, required: true, unique: true },
-	pinnedMessages: { type: [String], default: [] }
-}, { collection: 'serverPins' });
-
 const Command = mongoose.model('Command', commandSchema);
 const Button = mongoose.model('Button', buttonSchema);
 const Link = mongoose.model('Link', linkSchema);
-const GXP = mongoose.model('GXP', gxpSchema);
-const Inactivity = mongoose.model('Inactivity', inactivitySchema);
 const Pin = mongoose.model('Pin', pinsSchema);
+const GXP = mongoose.model('GXP', gxpSchema);
 
 module.exports = 
 {
 	Command,
 	Button,
 	Link,
-	GXP,
-	Inactivity,
-	Pin
+	Pin,
+	GXP
 };

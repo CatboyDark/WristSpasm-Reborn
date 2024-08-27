@@ -1,4 +1,4 @@
-const { setupMsg, setupButtons } = require('../../logic/settings/setupMenu.js');
+const { setupMsg, setupButtons } = require('../../logic/setup/menuSetup.js');
 const { createSlash } = require('../../../helper/builder.js');
 
 module.exports = createSlash({
@@ -8,13 +8,6 @@ module.exports = createSlash({
 		
 	async execute(interaction) 
 	{
-		try
-		{
-			console.log(setupMsg, setupButtons);
-			await interaction.reply({ embeds: [setupMsg], components: [setupButtons], ephemeral: true });
-		}
-		catch{
-			console.log;
-		}
+		await interaction.reply({ embeds: [setupMsg], components: [setupButtons], ephemeral: true });
 	}
 });

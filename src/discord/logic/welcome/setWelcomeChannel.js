@@ -1,5 +1,7 @@
-const { createModal, createMsg } = require('../../../helper/builder.js');
+const { createModal, createMsg, createError } = require('../../../helper/builder.js');
 const { readConfig, writeConfig } = require('../../../helper/utils.js');
+
+const invalidChannel = createError('**That\'s not a valid channel ID!**');
 
 async function setWelcomeChannel(interaction)
 {
@@ -23,7 +25,7 @@ async function setWelcomeChannel(interaction)
 	const channel = await interaction.guild.channels.fetch(input).catch(() => null);
 	if (!channel) 
 	{ 
-		return interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**That\'s not a valid channel ID!**' })], ephemeral: true });
+		return interaction.reply({ embeds: [invalidChannel], ephemeral: true });
 	}
 	const config = readConfig();
 	config.features.welcomeChannel = input;

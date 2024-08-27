@@ -1,5 +1,7 @@
-const { createModal, createMsg } = require('../../../helper/builder.js');
+const { createModal, createMsg, createError } = require('../../../helper/builder.js');
 const { readConfig, writeConfig } = require('../../../helper/utils.js');
+
+const invalidRole = createError('**That\'s not a valid Role ID!**');
 
 async function setStaffRole(interaction) 
 {
@@ -21,7 +23,7 @@ async function setStaffRole(interaction)
 
 	const input = interaction.fields.getTextInputValue('setStaffRoleInput');
 	const role = interaction.guild.roles.cache.get(input);
-	if (!role) return interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**That\'s not a valid Role ID!**' })], ephemeral: true });
+	if (!role) return interaction.reply({ embeds: [invalidRole], ephemeral: true });
 
 	const roleIDs = interaction.guild.roles.cache
 		.filter(r => r.position >= role.position)

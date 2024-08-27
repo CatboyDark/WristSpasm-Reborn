@@ -23,9 +23,9 @@ const cmdError = (interaction) =>
 		});
 	
 		const config = readConfig();
-		const logsChannel = await interaction.client.channels.fetch(config.logsChannel);
+		const eventsChannel = await interaction.client.channels.fetch(config.eventsChannel);
 	
-		logsChannel.send({ embeds: [eMsgStaff] });
+		eventsChannel.send({ embeds: [eMsgStaff] });
 		console.error(error);
 	
 		if (interaction.replied || interaction.deferred) 

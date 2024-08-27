@@ -2,7 +2,7 @@ const mineflayer = require('mineflayer');
 const path = require('path');
 const fs = require('fs');
 const { ign } = require('../../config.json');
-const { getMsg, send } = require('./logic/chat.js');
+const { getMsg } = require('./logic/chat.js');
 
 class MC
 {
@@ -21,17 +21,10 @@ class MC
 		this.client = client;
 		this.bot = mineflayer.createBot(this.instance);
 
-		this.bot.send = (message) => send(this.bot, message);
-
-		this.init();
-	}
-
-	async init() 
-	{
-		await this.initCmds();
-		await this.initFeatures();
-		await this.initLogic();
-		await this.login();
+		this.initCmds();
+		this.initFeatures();
+		this.initLogic();
+		this.login();
 	}
 
 	initCmds() 
@@ -51,29 +44,23 @@ class MC
 		}
 
 		this.bot.on('message', message => 
+		{
+			const { chat, rank, guildRank, sender, content } = getMsg(message.toString());
+			if (!content) return;
+		
+			const [commandName, ...args] = content.split(/ +/);
+			const command = commandName.toLowerCase();
+			
+			if (this.cList.has(command)) 
 			{
-				const { chat, rank, guildRank, sender, content } = getMsg(message.toString());
-		
-				if (!content) return;
-		
-				const command = content.split(' ')[0].toLowerCase();
-				console.log(`Parsed command: ${command}`);
-		
-				if (this.cList.has(command)) 
+				const cmd = this.cList.get(command);
+				if (cmd.chat.includes(chat) || (chat === 'staff' && cmd.chat.includes('guild'))) 
 				{
-					const cmd = this.cList.get(command);
-					console.log(`Executing command: ${command}`);
-		
-					if (cmd.chat.includes(chat)) 
-					{
-						cmd.execute(this.client, { msg: { content, sender, chat, rank, guildRank } });
-					} 
-					else 
-					{
-						console.error(`Command ${command} not allowed in chat type ${chat}.`);
-					}
-				} 
-			});
+					const msg = { chat, rank, guildRank, sender, content, args };
+					cmd.execute(this.client, msg);
+				}
+			}
+		});
 	}
 	
 	initFeatures()
@@ -84,7 +71,7 @@ class MC
 		for (const f of fFiles) 
 		{
 			const fp = path.join(fDir, f);
-			const feature = require(fp)
+			const feature = require(fp);
 			if (typeof feature === 'function') feature(this.bot, this.client);
 			else console.error(`Feature at ${fp} is not a function.`);
 		}
@@ -116,11 +103,7 @@ class MC
 	{
 		const { server, _host } = this.bot._client.socket;
 		console.log(`${this.instance.username} has joined ${server || _host}.`);
-	
-		this.bot.once('spawn', () => 
-		{
-			this.Logic.limbo(this.bot);
-		});
+		this.Logic.limbo(this.bot);
 	}
 
 	onKick(reason) 

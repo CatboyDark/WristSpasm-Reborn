@@ -1,7 +1,9 @@
 /* eslint-disable indent */
 
-const { createMsg, createRow } = require('../../helper/builder.js');
+const { createMsg, createRow, createError } = require('../../helper/builder.js');
 const { readConfig, toggleConfig } = require('../../helper/utils.js');
+
+const missingChannel = createError('**You must add a logs channel first!**');
 
 const loggingMsg = createMsg({
 	title: 'Logging',
@@ -37,7 +39,7 @@ async function logging(interaction)
 
 	if (!config.logsChannel)
 	{
-		interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**You must add a logs channel first!**', ephemeral: true })] });
+		interaction.reply({ embeds: [missingChannel], ephemeral: true });
 	}
 	else
 	{

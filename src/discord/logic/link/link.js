@@ -3,6 +3,10 @@ const Errors = require('hypixel-api-reborn');
 const { createMsg, createRow, createModal, createError } = require('../../../helper/builder.js');
 const { getEmoji, getDiscord, getPlayer, updateRoles } = require('../../../helper/utils.js');
 
+const notLinked = createError('**Discord is not linked!**\n_ _\nClick on **How To Link** for more info.');
+const noMatch = createError('**Discord does not match!**\n_ _\nClick on **How To Link** for more info.');
+const invalidIGN = createError('**Invalid Username!**');
+
 async function createLinkMsg() 
 {
 	const check = await getEmoji('check');
@@ -46,10 +50,6 @@ const modal = createModal({
 	}]
 });
 
-const notLinked = createError('**Discord is not linked!**\n_ _\nClick on **How To Link** for more info.');
-const noMatch = createError('**Discord does not match!**\n_ _\nClick on **How To Link** for more info.');
-const invalidIGN = createError('**Invalid Username!**');
-
 async function link(interaction) 
 {
 	if (!interaction.isModalSubmit()) return interaction.showModal(modal);
@@ -66,8 +66,10 @@ async function link(interaction)
 	{
 		const player = await getPlayer(input);
 		const discord = await getDiscord(input);
-		if (!discord) return interaction.followUp({ embeds: [notLinked] });
-		if (interaction.user.username !== discord) return interaction.followUp({ embeds: [noMatch] });
+		if (!discord || discord === null) 
+			return interaction.followUp({ embeds: [notLinked] });
+		if (interaction.user.username !== discord) 
+			return interaction.followUp({ embeds: [noMatch] });
 
 		await Link.create({ uuid: player.uuid, dcid: interaction.user.id }).catch(() => {});
 
@@ -78,7 +80,7 @@ async function link(interaction)
 		catch (e) 
 		{
 			if (e.message.includes('Missing Permissions')) 
-				interaction.followUp({ embeds: [createMsg({ color: 'FFA500', desc: '**Silly! I cannot change the nickname of the server owner!**' })]});
+				interaction.followUp({embeds: [createMsg({ color: 'FF5B00', desc: '**I don\'t have permission to change your nickname!**' })] });
 		}
 
 		const { addedRoles, removedRoles } = await updateRoles(interaction, player);
@@ -109,15 +111,16 @@ async function link(interaction)
 	} 
 	catch (e)
 	{
-		if (e.message === Errors.PLAYER_DOES_NOT_EXIST) { return interaction.followUp({ embeds: [invalidIGN] }); }
+		if (e.message === Errors.PLAYER_DOES_NOT_EXIST)
+			return interaction.followUp({ embeds: [invalidIGN] });
 		console.log(e); 
 	}
 }
 
 
-async function linkHelpLogic(interaction)
+async function linkHelp(interaction)
 {
-	await interaction.reply({ embeds: [linkHelpMsg] });
+	await interaction.reply({ embeds: [linkHelpMsg], ephemeral: true });
 }
 
 module.exports = 
@@ -125,5 +128,5 @@ module.exports =
 	createLinkMsg,
 	linkButtons,
 	link,
-	linkHelpLogic
+	linkHelp
 };

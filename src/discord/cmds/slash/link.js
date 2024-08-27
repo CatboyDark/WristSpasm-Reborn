@@ -1,10 +1,10 @@
-const { createSlash, createError, createMsg } = require('../../../helper/builder.js');
+const { createSlash, createMsg, createError } = require('../../../helper/builder.js');
 const { getEmoji, getPlayer, getDiscord, updateRoles } = require('../../../helper/utils.js');
 const { Link } = require('../../../mongo/schemas.js');
 const Errors = require('hypixel-api-reborn');
 
-const notLinked = createError('**Discord is not linked!**\n_ _\nClick on **How To Link** for more info.');
-const noMatch = createError('**Discord does not match!**\n_ _\nClick on **How To Link** for more info.');
+const notLinked = createError('**Discord is not linked!**');
+const noMatch = createError('**Discord does not match!**');
 const invalidIGN = createError('**Invalid Username!**');
 
 module.exports = createSlash({
@@ -38,7 +38,7 @@ module.exports = createSlash({
 			await interaction.member.setNickname(player.nickname)
 				.catch(e => {
 					if (e.message.includes('Missing Permissions')) 
-						interaction.followUp({embeds: [createMsg({color: 'FFA500',desc: '**Silly! I cannot change the nickname of the server owner!**'})] });
+						interaction.followUp({embeds: [createMsg({ color: 'FF5B00', desc: '**I don\'t have permission to change your nickname!**' })] });
 				});
 	
 			const { addedRoles, removedRoles } = await updateRoles(interaction, player);

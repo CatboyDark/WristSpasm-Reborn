@@ -1,5 +1,8 @@
-const { createMsg, createRow, createModal } = require('../../../helper/builder.js');
+const { createMsg, createRow, createModal, createError } = require('../../../helper/builder.js');
 const { readConfig, writeConfig, toggleConfig } = require('../../../helper/utils.js');
+
+const invalidCata = createError('**That\'s not a valid Cata level!**');
+const invalidRole = createError('**That\'s not a valid Role ID!**');
 
 function createCataRolesMsg() 
 {
@@ -14,12 +17,12 @@ function createCataRolesMsg()
 	return createMsg({ title: 'Custom Roles: Cata', desc: `You may assign a role to any Catacombs level.\n### Roles:\n${roleList}` });
 }
 
-const buttons = createRow([
+const row1 = createRow([
 	{ id: 'createCataRoles', label: 'Create Role', style: 'Green' },
 	{ id: 'deleteCataRoles', label: 'Remove Role', style: 'Red' }
 ]);
 
-function createButtons()
+function createRow2()
 {
 	const config = readConfig();
 	const back = createRow([
@@ -28,6 +31,17 @@ function createButtons()
 	]);
 
 	return back;
+}
+
+async function cataRoles(interaction)
+{
+	await interaction.update({ embeds: [createCataRolesMsg()], components: [row1, createRow2()] });
+}
+
+async function cataRolesToggle(interaction)
+{
+	await toggleConfig('features.cataRolesToggle');
+	await cataRoles(interaction);
 }
 
 async function createCataRoles(interaction)
@@ -61,9 +75,9 @@ async function createCataRoles(interaction)
 		const cataInput = interaction.fields.getTextInputValue('cataInput');
 		const cataRole = interaction.fields.getTextInputValue('cataRoleInput');
 
-		if (cataInput < 0 || cataInput > 50) return interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**That\'s not a valid Cata level!**' })], ephemeral: true });
+		if (cataInput < 0 || cataInput > 50) return interaction.reply({ embeds: [invalidCata], ephemeral: true });
 		const role = interaction.guild.roles.cache.get(cataRole);
-		if (!role) return interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**That\'s not a valid Role ID!**' })], ephemeral: true });
+		if (!role) return interaction.reply({ embeds: [invalidRole], ephemeral: true });
 
 		const config = readConfig();
 		config.cataRoles[cataInput] = cataRole;
@@ -104,24 +118,13 @@ async function deleteCataRoles(interaction)
 				delete config.cataRoles[cataRemoveInput];
 				writeConfig(config);
 			}
-			else return interaction.reply({ embeds: [createMsg({ desc: `You don\'t have a role set for **Catacombs Level ${cataRemoveInput}**!` })], ephemeral: true });
+			else return interaction.reply({ embeds: [createError(`You don\'t have a role set for **Catacombs Level ${cataRemoveInput}**!`)], ephemeral: true });
 
 			await cataRoles(interaction);
 		}
 
-		else return interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**That\'s not a valid Catacombs level!**' })], ephemeral: true });
+		else return interaction.reply({ embeds: [invalidCata], ephemeral: true });
 	}
-}
-
-async function cataRolesToggle(interaction)
-{
-	await toggleConfig('features.cataRolesToggle');
-	await cataRoles(interaction);
-}
-
-async function cataRoles(interaction)
-{
-	await interaction.update({ embeds: [createCataRolesMsg()], components: [buttons, createButtons()] });
 }
 
 module.exports =

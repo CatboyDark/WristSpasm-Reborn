@@ -1,6 +1,8 @@
-const { createMsg, createSlash } = require('../../../helper/builder.js');
+const { createMsg, createSlash, createError } = require('../../../helper/builder.js');
 const { Link } = require('../../../mongo/schemas.js');
 const { getEmoji, getPlayer, updateRoles } = require('../../../helper/utils.js');
+
+const notLinked = createError('**You are not linked! Please run /link to link your account!**');
 
 module.exports = createSlash({
 	name: 'roles',
@@ -19,7 +21,7 @@ module.exports = createSlash({
 			const data = await Link.findOne({ dcid: user }).exec();
 			if (!data) 
 			{
-				return interaction.followUp({ embeds: [createMsg({ color: 'FF0000', desc: '**You are not linked! Please run /link to link your account!**' })], ephemeral: true });
+				return interaction.followUp({ embeds: [notLinked], ephemeral: true });
 			}
 			const uuid = data.uuid;
 			const player = await getPlayer(uuid);
@@ -31,7 +33,7 @@ module.exports = createSlash({
 			catch (e) 
 			{
 				if (e.message.includes('Missing Permissions')) 
-					interaction.followUp({ embeds: [createMsg({ color: 'FFA500', desc: '**Silly! I cannot change the nickname of the server owner!**' })]});
+					interaction.followUp({embeds: [createMsg({ color: 'FF5B00', desc: '**I don\'t have permission to change your nickname!**' })] });
 			}
 
 			const { addedRoles, removedRoles } = await updateRoles(interaction, player);

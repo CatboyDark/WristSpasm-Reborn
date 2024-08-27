@@ -1,5 +1,7 @@
-const { createModal, createMsg, createRow } = require('../../../helper/builder.js');
+const { createModal, createRow, createError } = require('../../../helper/builder.js');
 const { readConfig, writeConfig, toggleConfig } = require('../../../helper/utils.js');
+
+const invalidRole = createError('**That\'s not a valid Role ID!**');
 
 async function createButtons()
 {
@@ -41,7 +43,7 @@ async function linkRoleToggle(interaction)
 
 		const input = await interaction.fields.getTextInputValue('setLinkRoleInput');
 		const role = interaction.guild.roles.cache.get(input);
-		if (!role) return interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**That\'s not a valid Role ID!**' })], ephemeral: true });
+		if (!role) return interaction.reply({ embeds: [invalidRole], ephemeral: true });
 
 		config.features.linkRole = input;
 		writeConfig(config);

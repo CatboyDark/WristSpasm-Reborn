@@ -11,7 +11,8 @@
         "git": "^0.1.5",
         "hypixel-api-reborn": "^11.3.4",
         "mineflayer": "^4.20.1",
-        "mongoose": "^8.5.3"
+        "mongoose": "^8.5.3",
+        "node-cron": "^3.0.3"
     },
     "devDependencies": {
         "eslint": "^9.9.0"

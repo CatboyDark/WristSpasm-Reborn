@@ -1,4 +1,4 @@
-const { createMsg, createSlash } = require('../../../helper/builder.js');
+const { createMsg, createSlash, createError } = require('../../../helper/builder.js');
 const { getEmoji } = require('../../../helper/utils.js');
 	
 module.exports = createSlash({
@@ -38,7 +38,7 @@ module.exports = createSlash({
 		if (noPerms.length > 0) 
 		{
 			const noPermRoles = noPerms.map(role => `- <@&${role.id}>`).join('\n');
-			await interaction.followUp({ embeds: [createMsg({ color: 'FF0000', desc: `**You do not have permission to manage these roles:**\n\n${noPermRoles}` })] });
+			await interaction.followUp({ embeds: [createError(`**You do not have permission to manage these roles:**\n\n${noPermRoles}`)] });
 		}
 
 		const roleAdd = validRoles.filter(role => !user.roles.cache.has(role.id));

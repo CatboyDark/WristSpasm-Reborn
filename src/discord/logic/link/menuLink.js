@@ -16,7 +16,7 @@ const linkFeaturesMsg = createMsg({
 		'You may create a new role or set an existing role as the Linked Role.'
 });
 
-async function createLinkFeaturesButtons()
+async function createRow1()
 {
 	const config = readConfig();
 	const buttons = createRow([
@@ -34,11 +34,10 @@ const back = createRow([
 
 async function accountLinking(interaction)
 {
-	await interaction.update({ embeds: [linkFeaturesMsg], components: [await createLinkFeaturesButtons(), back] });
+	await interaction.update({ embeds: [linkFeaturesMsg], components: [await createRow1(), back] });
 }
 
 module.exports =
 {
-	createLinkFeaturesButtons,
 	accountLinking
 };

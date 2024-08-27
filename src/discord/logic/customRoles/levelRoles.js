@@ -1,5 +1,7 @@
-const { createMsg, createRow, createModal } = require('../../../helper/builder.js');
+const { createMsg, createRow, createModal, createError } = require('../../../helper/builder.js');
 const { readConfig, writeConfig, toggleConfig } = require('../../../helper/utils.js');
+
+const invalidRole = createError('**That\'s not a valid Role ID!**');
 
 function createLevelRolesMsg() 
 {
@@ -18,7 +20,7 @@ function createLevelRolesMsg()
 	});
 }
 
-function createButtons()
+function createRow3()
 {
 	const config = readConfig();
 	const back = createRow([
@@ -46,7 +48,7 @@ const levels =
 	{ id: 'level480', label: 'Level [480]', desc: '480-520' }
 ];
 
-const levelRolesMenu = createRow([
+const row1 = createRow([
 	{
 	  id: 'levelRolesMenu',
 	  placeholder: 'Add roles',
@@ -58,9 +60,14 @@ const levelRolesMenu = createRow([
 	}
 ]);
 
-const removeRoleButton = createRow([
+const row2 = createRow([
 	{ id: 'removeLevelRole', label: 'Remove Role', style: 'Red' }
 ]);
+
+async function levelRoles(interaction)
+{
+	await interaction.update({ embeds: [createLevelRolesMsg()], components: [row1, row2, createRow3()] });
+}
 
 async function createLevelRoles(interaction) 
 {
@@ -90,7 +97,7 @@ async function createLevelRoles(interaction)
 		const input = interaction.fields.getTextInputValue(`${selectedOption}Input`);
 
 		const role = interaction.guild.roles.cache.get(input);
-		if (!role) return interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: '**That\'s not a valid Role ID!**' })], ephemeral: true });
+		if (!role) return interaction.reply({ embeds: [invalidRole], ephemeral: true });
 
 		const levelNumber = selectedOption.replace('level', '');
 
@@ -144,11 +151,6 @@ async function removeLevelRole(interaction)
 			await interaction.reply({ embeds: [createMsg({ color: 'FF0000', desc: `**No role found for Level ${input}!**` })], ephemeral: true });
 		}
 	}
-}
-
-async function levelRoles(interaction)
-{
-	await interaction.update({ embeds: [createLevelRolesMsg()], components: [levelRolesMenu, removeRoleButton, createButtons()] });
 }
 
 module.exports = 

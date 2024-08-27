@@ -6,56 +6,31 @@ const Logic = readLogic();
 	
 const map = 
 {
-	'createLevelRoles': ['level0', 'level40', 'level80', 'level120', 'level160', 'level200', 'level240', 'level280', 'level320', 'level360', 'level400', 'level440', 'level480'],
-	'testFunction': ['a', 'c']
+	'createLevelRoles': ['level0', 'level40', 'level80', 'level120', 'level160', 'level200', 'level240', 'level280', 'level320', 'level360', 'level400', 'level440', 'level480']
 };
 
-const menuHandler = async (interaction) =>
+const menuHandler = async (interaction) => 
 {
 	const { values } = interaction;
 	const selectedValue = values[0];
 	
-	let logicFunction = null;
-	
-	for (const [key, valueList] of Object.entries(map))
+	let logicFunction = Logic[selectedValue];
+	if (!logicFunction) 
 	{
-		if (valueList.includes(selectedValue))
-		{
-			logicFunction = Logic[key];
-			break;
-		}
+		const mappedLogicKey = Object.keys(map).find(key => map[key].includes(selectedValue));
+		if (mappedLogicKey) 
+			logicFunction = Logic[mappedLogicKey];
 	}
-	
-	if (!logicFunction)
+
+	if (logicFunction) await logicFunction(interaction);
+	else 
 	{
-		logicFunction = Logic[selectedValue];
-	}
-	
-	if (logicFunction)
-	{
-		await logicFunction(interaction);
-	}
-	else
-	{
-		let missingKey = null;
-	
-		for (const [key, valueList] of Object.entries(map))
-		{
-			if (valueList.includes(selectedValue))
-			{
-				missingKey = key;
-				break;
-			}
-		}
-	
-		if (missingKey)
-		{
-			console.warn(`Logic for ${missingKey} is missing for ${selectedValue}.`);
-		}
-		else
-		{
+		const missingKey = Object.keys(map).find(key => map[key].includes(selectedValue));
+
+		if (missingKey) 
+			console.warn(`Logic for ${selectedValue} (${missingKey}) does not exist!`);
+		else 
 			console.warn(`Logic for ${selectedValue} does not exist!`);
-		}
 	}
 };
 	

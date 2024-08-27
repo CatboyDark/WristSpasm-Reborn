@@ -103,7 +103,7 @@ async function getDiscord(user)
 	const player = await getPlayer(user);
 	const discord = await player.socialMedia.find(media => media.id === 'DISCORD');
 
-	return discord.link;
+	return discord.link || null;
 }
 
 async function getGuild(type, value) 
@@ -224,6 +224,8 @@ async function updateRoles(interaction, player)
 {
 	const config = readConfig();
 
+	const guild = await getGuild('player', player.uuid);
+
 	const addedRoles = [];
 	const removedRoles = [];
 
@@ -240,7 +242,6 @@ async function updateRoles(interaction, player)
 	// Assign Guild Role
 	if (config.features.guildRoleToggle)
 	{
-		const guild = await getGuild('player', player.uuid);
 		if (guild && guild.name === config.guild)
 		{
 			if (!interaction.member.roles.cache.has(config.features.guildRole))
@@ -255,6 +256,38 @@ async function updateRoles(interaction, player)
 			{
 				await interaction.member.roles.remove(config.features.guildRole); 
 				removedRoles.push(config.features.guildRole);
+			}
+		}
+	}
+
+	// Assign Guild Ranks Roles
+	if (config.features.guildRankRolesToggle)
+	{
+		if (guild && guild.name === config.guild)
+		{
+			const member = guild.members.find(member => member.uuid === player.uuid);
+			const rank = member.rank;
+			const rankIndex = guild.ranks.findIndex(r => r.name === rank) + 1;
+
+			const toggleKey = `guildRank${rankIndex}Toggle`;
+			const roleKey = `guildRank${rankIndex}Role`;
+
+			if (config.features[toggleKey]) 
+			{
+				const roleID = config.guildRankRoles[roleKey];
+				const role = interaction.guild.roles.cache.get(roleID);
+
+				await interaction.member.roles.add(role);
+				addedRoles.push(roleID);
+			}
+
+			for (const [key, id] of Object.entries(config.guildRankRoles)) 
+			{
+				if (key !== roleKey && id && interaction.member.roles.cache.has(id)) 
+				{
+					await interaction.member.roles.remove(id);
+					removedRoles.push(id);
+				}
 			}
 		}
 	}
