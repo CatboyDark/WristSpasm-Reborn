@@ -7,7 +7,7 @@ module.exports = createSlash({
     
 	async execute(interaction) 
 	{
-		const embed = await createHelpMsg(interaction);
-		await interaction.reply({ embeds: [embed], components: [helpButtons] });
+		const helpMsg = await createHelpMsg(interaction);
+		await interaction.reply({ embeds: [helpMsg], components: [helpButtons] });
 	}
 });

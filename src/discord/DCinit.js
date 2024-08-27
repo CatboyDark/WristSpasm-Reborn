@@ -33,14 +33,6 @@ class DC
 		this.client.sc = new Collection();
 	}
 
-	async init() 
-	{
-		await this.initCmds();
-		await this.initEvents();
-		await this.initEmojis();
-		this.login();
-	}
-
 	async initCmds() 
 	{
 		const cDir = path.join(__dirname, 'cmds');
@@ -172,6 +164,14 @@ class DC
 			}
 			console.log('Discord is online!');
 		});
+	}
+
+	async init() 
+	{
+		await this.initCmds();
+		await this.initEvents();
+		await this.initEmojis();
+		this.login();
 	}
 }
 

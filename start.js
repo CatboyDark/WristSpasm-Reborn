@@ -13,5 +13,3 @@ async function start()
 };
 
 start();
-
-e

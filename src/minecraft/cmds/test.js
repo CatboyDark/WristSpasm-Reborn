@@ -2,20 +2,20 @@ const { readConfig } = require('../../helper/utils.js');
 
 module.exports = 
 {
-	command: 'test',
-	chat: ['guild'],
+	command: 'kath',
+	chat: ['guild', 'staff', 'party', 'dm'],
 
-	execute(client, bot, msg) 
+	execute(client, bot) 
 	{
-		bot.send('/oc yes');
+		console.log('e')
+		bot.send('/oc kath is a raging homosexual');
 
 		const config = readConfig();
 		const logsChannel = client.channels.cache.get(config.logsChannel);
 
-		if (logsChannel) {
-			logsChannel.send(`Command: ${msg.content}\nSender: ${msg.sender}\nChat: ${msg.chat}\nRank: ${msg.rank}\nGuild Rank: ${msg.guildRank}`);
-		} else {
+		if (logsChannel) 
+			logsChannel.send(`Command: ${bot.msg.content}\nSender: ${bot.msg.sender}\nChat: ${bot.msg.chat}\nRank: ${bot.msg.rank}\nGuild Rank: ${bot.msg.guildRank}`);
+		else
 			console.error('Logs channel not found.');
-		}
 	}
 };

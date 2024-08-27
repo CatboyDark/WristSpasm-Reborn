@@ -35,15 +35,11 @@ module.exports = createSlash({
 			await Link.create({ uuid: player.uuid, dcid: interaction.user.id })
 				.catch((e) => { if (e.code === 11000) console.log('playersLinked: Duplicate Key!'); });
 
-			try 
-			{
-				await interaction.member.setNickname(player.nickname);
-			} 
-			catch (e) 
-			{
-				if (e.message.includes('Missing Permissions')) 
-					interaction.followUp({ embeds: [createMsg({ color: 'FFA500', desc: '**Silly! I cannot change the nickname of the server owner!**' })] });
-			}
+			await interaction.member.setNickname(player.nickname)
+				.catch(e => {
+					if (e.message.includes('Missing Permissions')) 
+						interaction.followUp({embeds: [createMsg({color: 'FFA500',desc: '**Silly! I cannot change the nickname of the server owner!**'})] });
+				});
 	
 			const { addedRoles, removedRoles } = await updateRoles(interaction, player);
 	
@@ -73,7 +69,9 @@ module.exports = createSlash({
 		}
 		catch (e)
 		{
-			if (e.message === Errors.PLAYER_DOES_NOT_EXIST) { return interaction.followUp({ embeds: [invalidIGN] }); }
+			if (e.message === Errors.PLAYER_DOES_NOT_EXIST) 
+				return interaction.followUp({ embeds: [invalidIGN] });
+			
 			console.log(e); 
 		}
 	}
