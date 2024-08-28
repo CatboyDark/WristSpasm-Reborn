@@ -9,7 +9,7 @@ async function start()
 	const discord = new DC();
 	await discord.init();
 	
-	// new MC(discord.client);
+	new MC(discord.client);
 };
 
 start();

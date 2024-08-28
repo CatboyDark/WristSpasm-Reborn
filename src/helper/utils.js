@@ -5,6 +5,7 @@ const { appID, token } = require('../../config.json');
 const fs = require('fs');
 const path = require('path');
 const configs = path.join(__dirname, '../../config.json');
+const axios = require('axios');
 
 function readConfig()
 {
@@ -96,6 +97,26 @@ async function getPlayer(user)
 	const player = await hypixel.getPlayer(user);
 
 	return player;
+}
+
+async function getIGN(uuid)
+{
+	const config = readConfig();
+	try 
+	{
+		const response = await axios.get(`https://playerdb.co/api/player/minecraft/${uuid}`,
+			{
+				headers: {
+					'User-Agent': `Discord: ${config.discord}`
+				}
+			});
+		return response.data.data.player.username;
+	} 
+	catch (error) 
+	{
+		console.error('Error fetching username for UUID:', error);
+		return null;
+	}
 }
 
 async function getDiscord(user)
@@ -220,7 +241,7 @@ async function getNw(player)
 	}
 }
 
-async function updateRoles(interaction, player)
+async function updateRoles(interaction, player, addLink = false)
 {
 	const config = readConfig();
 
@@ -229,13 +250,16 @@ async function updateRoles(interaction, player)
 	const addedRoles = [];
 	const removedRoles = [];
 
-	// Assign Linked Role
-	if (config.features.linkRoleToggle)
+	// Assign Link Role
+	if (addLink)
 	{
-		if (!interaction.member.roles.cache.has(config.features.linkRole))
+		if (config.features.linkRoleToggle)
 		{
-			await interaction.member.roles.add(config.features.linkRole);
-			addedRoles.push(config.features.linkRole);
+			if (!interaction.member.roles.cache.has(config.features.linkRole))
+			{
+				await interaction.member.roles.add(config.features.linkRole);
+				addedRoles.push(config.features.linkRole);
+			}
 		}
 	}
 
@@ -321,21 +345,26 @@ async function updateRoles(interaction, player)
 	// Assign SB Cata Role
 	if (config.features.cataRolesToggle) 
 	{
-		const cata = await getCataHighest(player);
-		const assignedRole = config.cataRoles[cata];
-
-		if (assignedRole) 
-		{
-			if (!interaction.member.roles.cache.has(assignedRole)) 
-			{
-				await interaction.member.roles.add(assignedRole);
-				addedRoles.push(assignedRole);
-			}
-		}
-
+		const cataHighest = await getCataHighest(player);
+		let highestCataRole = null;
+		
 		for (const [level, roleID] of Object.entries(config.cataRoles)) 
 		{
-			if (parseInt(level) !== cata && interaction.member.roles.cache.has(roleID)) 
+			if (parseInt(level) <= cataHighest) highestCataRole = roleID;
+		}
+		
+		if (highestCataRole) 
+		{
+			if (!interaction.member.roles.cache.has(highestCataRole)) 
+			{
+				await interaction.member.roles.add(highestCataRole);
+				addedRoles.push(highestCataRole);
+			}
+		}
+		
+		for (const [level, roleID] of Object.entries(config.cataRoles)) 
+		{
+			if (roleID !== highestCataRole && interaction.member.roles.cache.has(roleID)) 
 			{
 				await interaction.member.roles.remove(roleID);
 				removedRoles.push(roleID);
@@ -354,6 +383,7 @@ module.exports =
 	readLogic,
 	getEmoji,
 	getPlayer,
+	getIGN,
 	getDiscord,
 	getGuild,
 	getSBLevelHighest,

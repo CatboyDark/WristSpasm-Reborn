@@ -1,12 +1,34 @@
-const { createSlash, createMsg } = require('../../../helper/builder');
-const { readConfig } = require('../../../helper/utils');
-const { getGXPList } = require('../../logic/GXP/fetchGXP');
+const { createSlash, createMsg, createError } = require('../../../helper/builder.js');
+const { readConfig } = require('../../../helper/utils.js');
+const { getGXP } = require('../../logic/GXP/getGXP.js');
 
 const maxLength = 1024;
 
+const invalidThreshold = createError('**Invalid threshold.** Please provide a number (\'**50000**\' or \'**50k**\').');
+
+function chunkArray(array, maxLength) 
+{
+	const result = [];
+	let chunk = '';
+	for (const item of array) 
+	{
+		if ((chunk + item).length > maxLength) 
+		{
+			result.push(chunk);
+			chunk = item + '\n';
+		} 
+		else 
+		{
+			chunk += item + '\n';
+		}
+	}
+	if (chunk) result.push(chunk);
+	return result;
+}
+
 module.exports = createSlash({
 	name: 'gxplist',
-	desc: 'Displays GXP list',
+	desc: 'Displays GXP from the last 7 days',
 	options: [
 		{ type: 'string', name: 'threshold', desc: 'Filter members by GXP below this threshold (\'50000\' or \'50k\')' },
 		{ type: 'integer', name: 'join_date', desc: 'Filter members who joined before a certain number of days ago' }
@@ -30,10 +52,9 @@ module.exports = createSlash({
 			} 
 			else 
 			{
-				return interaction.reply({ embeds: [createMsg({ desc: '**Invalid threshold.** Please provide a number (\'**50000**\' or \'**50k**\').' })], ephemeral: true });
+				return interaction.reply({ embeds: [invalidThreshold], ephemeral: true });
 			}
 		}
-
 		if (joinDateInput !== null) 
 		{
 			const currentDate = new Date();
@@ -43,79 +64,40 @@ module.exports = createSlash({
 		await interaction.deferReply();
 
 		const config = readConfig();
-		const success = await interaction.followUp({ embeds: [createMsg({ title: 'WristSpasm', desc: '**Gathering data...**', icon: config.icon })] });
+		const success = await interaction.followUp({ embeds: [createMsg({ title: config.guild, desc: '**Gathering data...**', icon: config.icon })] });
 
-		let gxpList = await getGXPList();
-
-		if (threshold !== null) 
-		{
-			gxpList = gxpList.filter(member => member.gxp < threshold);
-		}
-
-		if (timeLimitDate !== null) 
-		{
-			gxpList = gxpList.filter(member => new Date(member.joinDate) < timeLimitDate);
-		}
-
-		const chunks = [];
-		for (let i = 0; i < gxpList.length; i += 50) 
-		{
-			chunks.push(gxpList.slice(i, i + 50));
-		}
+		let gxp = await getGXP();
+		if (threshold !== null)
+			gxp = gxp.filter(member => member.gxp < threshold);
+		if (timeLimitDate !== null)
+			gxp = gxp.filter(member => new Date(member.joinDate) < timeLimitDate);
 
 		await success.delete();
 
-		for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) 
+		const ignGxpPairs = gxp.map(member => `${member.ign.replace(/_/g, '\\_')} ${member.gxp}`);
+		const chunks = chunkArray(ignGxpPairs, maxLength);
+
+		const formattedThreshold = threshold !== null ? `Below ${Math.floor(threshold / 1000)}k` : '';
+		const formattedJoinDate = joinDateInput !== null ? `Joined ${joinDateInput}+ Days Ago` : '';
+		const embedTitle = `GXP List${formattedThreshold ? ` - ${formattedThreshold}` : ''}${formattedJoinDate ? ` - ${formattedJoinDate}` : ''}`;
+
+		for (let i = 0; i < chunks.length; i++) 
 		{
-			const chunk = chunks[chunkIndex];
-			let ignList = '';
-			let gxpList = '';
+			const chunk = chunks[i];
+			const splitLines = chunk.split('\n').filter(line => line.trim());
+			const ignList = splitLines.map(line => line.split(' ')[0]).join('\n');
+			const gxpList = splitLines.map(line => line.split(' ')[1]).join('\n');
 
-			for (const member of chunk) 
-			{
-				ignList += `${member.ign.replace(/_/g, '\\_')}\n`;
-				gxpList += `${member.gxp}\n`;
-			}
+			const embed = createMsg({
+				title: i === 0 ? embedTitle : undefined,
+				icon: config.icon,
+				fields: [
+					{ title: 'IGN', desc: ignList, inline: true },
+					{ title: 'GXP', desc: gxpList, inline: true }
+				]
+			});
 
-			const splitDescription = (text) => 
-			{
-				const parts = [];
-				for (let i = 0; i < text.length; i += maxLength) 
-				{
-					parts.push(text.substring(i, i + maxLength));
-				}
-				return parts;
-			};
-
-			const ignListChunks = splitDescription(ignList);
-			const gxpListChunks = splitDescription(gxpList);
-
-			const fThreshold = threshold 
-				? (threshold >= 1000 ? `${Math.floor(threshold / 1000)}k` : threshold.toString())
-				: null;
-
-			const joinDateLabel = joinDateInput !== null 
-				? `Joined ${joinDateInput}+ Days Ago` 
-				: null;
-
-			const embedTitle = [
-				'GXP List', 
-				fThreshold ? `Below ${fThreshold}` : null, 
-				joinDateLabel
-			].filter(Boolean).join(' - ');
-
-			for (let i = 0; i < ignListChunks.length; i++) 
-			{
-				const embed = createMsg({
-					fields: [
-						{ title: 'IGN', desc: ignListChunks[i], inline: true },
-						{ title: 'GXP', desc: gxpListChunks[i], inline: true }
-					],
-					icon: config.icon,
-					title: i === 0 && chunkIndex === 0 ? embedTitle : undefined
-				});
-				await interaction.channel.send({ embeds: [embed] });
-			}
+			await interaction.channel.send({ embeds: [embed] });
 		}
 	}
 });

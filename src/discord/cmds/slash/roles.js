@@ -33,7 +33,7 @@ module.exports = createSlash({
 			catch (e) 
 			{
 				if (e.message.includes('Missing Permissions')) 
-					interaction.followUp({embeds: [createMsg({ color: 'FF5B00', desc: '**I don\'t have permission to change your nickname!**' })] });
+					interaction.followUp({embeds: [createMsg({ color: 'FFD800', desc: '**I don\'t have permission to change your nickname!**' })] });
 			}
 
 			const { addedRoles, removedRoles } = await updateRoles(interaction, player);
