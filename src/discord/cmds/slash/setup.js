@@ -1,7 +1,7 @@
 const { setupMsg, setupButtons } = require('../../logic/setup/menuSetup.js');
-const { createSlash } = require('../../../helper/builder.js');
 
-module.exports = createSlash({
+module.exports =
+{
 	name: 'setup',
 	desc: 'Bot setup',
 	permissions: ['ManageGuild'],
@@ -10,4 +10,4 @@ module.exports = createSlash({
 	{
 		await interaction.reply({ embeds: [setupMsg], components: [setupButtons], ephemeral: true });
 	}
-});
+};

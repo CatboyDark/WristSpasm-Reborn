@@ -1,7 +1,8 @@
-const { createMsg, createSlash, createError } = require('../../../helper/builder.js');
+const { createMsg, createError } = require('../../../helper/builder.js');
 const { getEmoji } = require('../../../helper/utils.js');
 	
-module.exports = createSlash({
+module.exports =
+{
 	name: 'role',
 	desc: 'Add or remove a user\'s roles',
 	options: [
@@ -58,4 +59,4 @@ module.exports = createSlash({
 			await interaction.followUp({ embeds: [embed] });
 		}
 	}
-});
+};

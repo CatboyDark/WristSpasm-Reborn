@@ -7,40 +7,40 @@ const { readConfig } = require('../../../helper/utils.js');
 async function createHelpMsg(interaction) 
 {
 	const config = readConfig();
-
 	const cmdsDirectory = path.join(__dirname, '..', '..', 'cmds', 'slash');
+
 	const cmds = fs.readdirSync(cmdsDirectory)
+		.filter(file => file.endsWith('.js'))
 		.map(file => require(path.join(cmdsDirectory, file)))
-		.filter(command => command && command.type && command.data);
+		.filter(command => command && command.name && command.desc);
 
 	const userPermissions = BigInt(interaction.member.permissions.bitfield);
-	
+
 	const getPermissionName = (permissionBit) => 
 	{
 		return Object.keys(PermissionFlagsBits).find(key => PermissionFlagsBits[key] === permissionBit);
 	};
 
 	const hasAdminPermission = (userPermissions & PermissionFlagsBits.Administrator) === PermissionFlagsBits.Administrator;
-	
+
 	const hasPermission = (permissions) => 
 	{
 		if (hasAdminPermission) return true;
 		if (permissions.length === 0) return true;
-	
-		const permissionBits = permissions.reduce((acc, perm) => {
+		const permissionBits = permissions.reduce((acc, perm) => 
+		{
 			const permBit = PermissionFlagsBits[perm];
-			if (permBit === undefined) throw new Error(`Unsupported permission: ${perm}`);
 			return acc | BigInt(permBit);
 		}, BigInt(0));
-	
+
 		return (userPermissions & permissionBits) === permissionBits;
 	};
 
 	const formatCommands = (commands) =>
 		commands
-			.sort((a, b) => a.data.name.localeCompare(b.data.name))
+			.sort((a, b) => a.name.localeCompare(b.name))
 			.map(cmd => {
-				let description = `- **\`/${cmd.data.name}\`** ${cmd.data.description}`;
+				let description = `- **\`/${cmd.name}\`** ${cmd.desc}`;
 				if (cmd.permissions && cmd.permissions.length > 0) 
 				{
 					const permissionsRequired = cmd.permissions.map(perm => getPermissionName(PermissionFlagsBits[perm])).join(', ');

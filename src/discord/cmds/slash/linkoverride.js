@@ -1,11 +1,12 @@
 const { Errors } = require('hypixel-api-reborn');
-const { createSlash, createMsg, createError } = require('../../../helper/builder.js');
+const { createMsg, createError } = require('../../../helper/builder.js');
 const { getPlayer } = require('../../../helper/utils.js');
 const { Link } = require('../../../mongo/schemas.js');
 
 const invalidIGN = createError('**Invalid Username!**');
 
-module.exports = createSlash({
+module.exports =
+{
 	name: 'linkoverride',
 	desc: 'Link Override',
 	options: [
@@ -44,4 +45,4 @@ module.exports = createSlash({
 			console.log(e); 
 		}
 	}
-});
+};

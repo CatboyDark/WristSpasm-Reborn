@@ -2,7 +2,6 @@ const { createMsg } = require('../../../helper/builder.js');
 
 module.exports = 
 {
-	type: 'plain',
 	name: '.h',
 
 	async execute(message) 

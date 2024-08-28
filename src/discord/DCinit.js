@@ -2,7 +2,7 @@ const { Client, Partials, Collection, GatewayIntentBits, REST, Routes, ActivityT
 const fs = require('fs');
 const path = require('path');
 const { appID, token } = require('../../config.json');
-const { createMsg } = require('../helper/builder.js');
+const { createMsg, createSlash } = require('../helper/builder.js');
 const { readConfig } = require('../helper/utils.js');
 const emojis = path.join(__dirname, '../../assets/emojis');
 
@@ -43,37 +43,36 @@ class DC
 
 	async initCmds() 
 	{
-		const cDir = path.join(__dirname, 'cmds');
-		const cFiles = fs.readdirSync(cDir);
+		const slashDir = path.join(__dirname, 'cmds/slash');
+		const plainDir = path.join(__dirname, 'cmds/plain');
+		
+		const slashFiles = fs.readdirSync(slashDir);
+		const plainFiles = fs.readdirSync(plainDir);
 
-		const commands = [];
+		const slashCommands = [];
 
-		for (const c of cFiles) 
+		for (const f of slashFiles) 
 		{
-			const cp = path.join(cDir, c);
-			const cf = fs.readdirSync(cp).filter((file) => file.endsWith('.js'));
+			const filePath = path.join(slashDir, f);
+			const cmdData = require(filePath);
 
-			for (const f of cf) 
-			{
-				const fp = path.join(cp, f);
-				const cmd = require(fp);
-
-				if (cmd.type === 'plain') 
-				{
-					this.client.pc.set(cmd.name, cmd);
-				}
-				if (cmd.type === 'slash') 
-				{
-					this.client.sc.set(cmd.data.name, cmd);
-					commands.push(cmd.data.toJSON());
-				}
-			}
+			const slashCmd = createSlash(cmdData);
+			this.client.sc.set(slashCmd.data.name, slashCmd);
+			slashCommands.push(slashCmd.data.toJSON());
 		}
 
 		const rest = new REST({ version: '10' }).setToken(this.token);
-		await rest.put(Routes.applicationCommands(this.appID), { body: commands });
+		await rest.put(Routes.applicationCommands(this.appID), { body: slashCommands });
 
-		this.client.on('message', async (message) => 
+		for (const f of plainFiles) 
+		{
+			const filePath = path.join(plainDir, f);
+			const cmdData = require(filePath);
+
+			this.client.pc.set(cmdData.name, cmdData);
+		}
+		
+		this.client.on('messageCreate', async (message) => 
 		{
 			if (message.author.bot) return;
 
@@ -102,7 +101,7 @@ class DC
 			{
 				for (const event of events) this.client.on(event.name, (...args) => event.execute(...args));
 			}
-			else console.error(`${e} does not export an array of events`);
+			else console.error(`${e} is incomplete!`);
 		}
 	}
 
@@ -115,7 +114,7 @@ class DC
 					'Authorization': `Bot ${this.token}`
 				}
 			});
-		if (!response.ok) throw new Error('Failed to fetch emojis D:');
+		if (!response.ok) throw new Error('Failed to fetch emojis :(');
 	
 		const existingEmojis = await response.json();
 		this.client.emojiMap = new Map(existingEmojis.items.map(emoji => [emoji.name, emoji.id]));

@@ -1,7 +1,7 @@
-const { createSlash } = require('../../../helper/builder.js');
 const { createCommandDataMsg, dataButtons } = require('../../logic/data.js');
 
-module.exports = createSlash({
+module.exports =
+{
 	name: 'data',
 	desc: 'Display bot usage data',
 
@@ -10,4 +10,4 @@ module.exports = createSlash({
 		const dataMsg = await createCommandDataMsg();
 		await interaction.reply({ embeds: [dataMsg], components: [dataButtons] });
 	}
-});
+};

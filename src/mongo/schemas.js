@@ -26,7 +26,7 @@ const pinsSchema = new mongoose.Schema({
 const gxpSchema = new mongoose.Schema({
 	uuid: { type: String, required: true, unique: true },
 	entries: [{
-		date: { type: String, required: true },
+		date: { type: Number, required: true },
 		gxp: { type: Number, required: true }
 	}]
 }, { collection: 'gxpLog' });

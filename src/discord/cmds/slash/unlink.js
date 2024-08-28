@@ -1,11 +1,12 @@
-const { createSlash, createMsg, createError } = require('../../../helper/builder.js');
+const { createMsg, createError } = require('../../../helper/builder.js');
 const { readConfig } = require('../../../helper/utils.js');
 const { Link } = require('../../../mongo/schemas.js');
 
 const notLinked = createError('**You are not linked!**');
 const success = createMsg({ desc: '**You are now unlinked!**' });
 
-module.exports = createSlash({
+module.exports =
+{
 	name: 'unlink',
 	desc: 'Unlink your discord',
 		
@@ -35,4 +36,4 @@ module.exports = createSlash({
 			await interaction.reply({ embeds: [notLinked] });
 		}
 	}
-});
+};

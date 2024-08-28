@@ -1,10 +1,11 @@
-const { createMsg, createSlash, createError } = require('../../../helper/builder');
+const { createMsg, createError } = require('../../../helper/builder');
 
 const minCount = createError('You must purge at least one message!');
 const maxCount = createError('You can only purge up to 100 messages!');
 const ageLimit = createError('You cannot purge messages older than 14 days!');
 
-module.exports = createSlash({
+module.exports =
+{
 	name: 'purge',
 	desc: 'Purge messages',
 	options: [
@@ -45,4 +46,4 @@ module.exports = createSlash({
 			await interaction.reply({ embeds: [ageLimit], ephemeral: true });
 		}
 	}
-});
+};

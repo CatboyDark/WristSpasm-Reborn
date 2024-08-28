@@ -1,7 +1,7 @@
 const { cmds } = require('../../logic/help/help.js');
-const { createSlash } = require('../../../helper/builder.js');
 
-module.exports = createSlash({
+module.exports =
+{
 	name: 'help',
 	desc: 'Display bot info',
     
@@ -9,4 +9,4 @@ module.exports = createSlash({
 	{
 		await cmds(interaction);
 	}
-});
+};

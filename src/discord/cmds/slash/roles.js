@@ -1,10 +1,11 @@
-const { createMsg, createSlash, createError } = require('../../../helper/builder.js');
+const { createMsg, createError } = require('../../../helper/builder.js');
 const { Link } = require('../../../mongo/schemas.js');
 const { getEmoji, getPlayer, updateRoles } = require('../../../helper/utils.js');
 
 const notLinked = createError('**You are not linked! Please run /link to link your account!**');
 
-module.exports = createSlash({
+module.exports =
+{
 	name: 'roles',
 	desc: 'Update your roles',
 
@@ -67,4 +68,4 @@ module.exports = createSlash({
 			throw error;
 		}
 	}
-});
+};
