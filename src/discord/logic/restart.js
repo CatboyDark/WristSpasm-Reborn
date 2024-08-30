@@ -6,6 +6,7 @@ async function restart()
 {
 	try 
 	{
+		await execPromise('git update-index --skip-worktree README.md');
 		await execPromise('git pull');
 		await execPromise('pm2 restart Eris');
 	}
