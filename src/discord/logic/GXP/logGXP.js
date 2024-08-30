@@ -18,6 +18,7 @@ function getToday()
 
 async function logGXP() 
 {
+	console.log('Attempting to log GXP...');
 	try 
 	{
 		const config = readConfig();
@@ -33,38 +34,21 @@ async function logGXP()
 					gxp: exp
 				}));
 
-			const member = await GXP.findOne({ uuid });
-
-			if (member) 
+			for (const entry of entries) 
 			{
-				for (const entry of entries) 
-				{
-					await GXP.updateOne(
-						{ uuid, 'entries.date': entry.date },
-						{ $set: { 'entries.$.gxp': entry.gxp } },
-						{ upsert: true }
-					);
-				}
+				const updateResult = await GXP.updateOne(
+					{ uuid, 'entries.date': entry.date },
+					{ $set: { 'entries.$.gxp': entry.gxp } }
+				);
 
-				const existingDates = member.entries.map(e => e.date);
-				const newEntries = entries.filter(entry => !existingDates.includes(entry.date));
-
-				if (newEntries.length > 0) 
+				if (!updateResult.matchedCount) 
 				{
 					await GXP.updateOne(
 						{ uuid },
-						{ $push: { entries: { $each: newEntries } } }
+						{ $push: { entries: entry } },
+						{ upsert: true }
 					);
 				}
-			} 
-			else 
-			{
-				const newMember = new GXP({
-					uuid,
-					entries
-				});
-
-				await newMember.save();
 			}
 		}
 	} 
@@ -72,7 +56,7 @@ async function logGXP()
 	{
 		console.error('Error logging GXP:', error);
 	}
+	console.log('Completed logging GXP!');
 }
-
 
 module.exports = { logGXP };

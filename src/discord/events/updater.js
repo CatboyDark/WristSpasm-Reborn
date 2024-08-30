@@ -11,6 +11,8 @@ const updateButton = createRow([
 	{ id: 'update', label: 'Update', style: 'Green' }
 ]);
 
+let lastHash = null;
+
 async function updateCheck(client) 
 {
 	const config = readConfig();
@@ -27,8 +29,9 @@ async function updateCheck(client)
 		const commitMsg = latestCommit.commit.message;
 		const localHash = localHashResult.stdout.trim();
 
-		if (remoteHash !== localHash) 
+		if (remoteHash !== localHash && remoteHash !== lastHash) 
 		{
+			lastHash = remoteHash;
 			const channel = await client.channels.fetch(config.eventsChannel);
 			channel.send({
 				embeds: [createMsg({ title: 'Update available!', desc: `**Summary:**\n\`${commitMsg}\`` })],
