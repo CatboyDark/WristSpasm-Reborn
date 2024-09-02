@@ -33,7 +33,6 @@ class DC {
     }
 
     async init() {
-        await this.update();
         await this.initCmds();
         await this.initEvents();
         await this.initEmojis();
