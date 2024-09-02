@@ -1,8 +1,8 @@
 const { createMsg, createRow } = require('../../helper/builder.js');
 
 const featuresMsg = createMsg({
-	title: 'Features',
-	desc: 
+    title: 'Features',
+    desc:
 		'1. **Welcome**\n' +
 		'What happens when someone joins your Discord server?\n\n' +
 
@@ -14,30 +14,29 @@ const featuresMsg = createMsg({
 });
 
 const featuresMenu = createRow([
-	{ 
-		id: 'featuresMenu',
-		placeholder: 'Select a feature',
-		options:
+    {
+        id: 'featuresMenu',
+        placeholder: 'Select a feature',
+        options:
 		[
-			{ value: 'welcome', label: 'Welcome', desc: 'What happens when someone joins your Discord server?' },
-			{ value: 'accountLinking', label: 'Account Linking', desc: 'Discord-Hypixel linking system' },
-			{ value: 'customRoles', label: 'Custom Roles', desc: 'Custom Skyblock Roles (Requires Account Linking)' }
+		    { value: 'welcome', label: 'Welcome', desc: 'What happens when someone joins your Discord server?' },
+		    { value: 'accountLinking', label: 'Account Linking', desc: 'Discord-Hypixel linking system' },
+		    { value: 'customRoles', label: 'Custom Roles', desc: 'Custom Skyblock Roles (Requires Account Linking)' }
 		]
-	}
+    }
 ]);
 
 const back = createRow([
-	{ id: 'backToSetup', label: 'Back', style: 'Gray' }
+    { id: 'backToSetup', label: 'Back', style: 'Gray' }
 ]);
 
-async function features(interaction)
-{
-	await interaction.update({ embeds: [featuresMsg], components: [featuresMenu, back] });
+async function features(interaction) {
+    await interaction.update({ embeds: [featuresMsg], components: [featuresMenu, back] });
 }
 
-module.exports = 
-{ 
-	features,
-	featuresMsg,
-	featuresMenu
+module.exports =
+{
+    features,
+    featuresMsg,
+    featuresMenu
 };

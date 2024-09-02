@@ -8,62 +8,53 @@ const execPromise = util.promisify(exec);
 
 const repoURL = 'https://api.github.com/repos/CatboyDark/Eris';
 const updateButton = createRow([
-	{ id: 'update', label: 'Update', style: 'Green' }
+    { id: 'update', label: 'Update', style: 'Green' }
 ]);
 
-async function updateCheck(client) 
-{
-	const config = readConfig();
+async function updateCheck(client) {
+    const config = readConfig();
 
-	try 
-	{
-		const [latestCommitResponse, localHashResult] = await Promise.all([
-			axios.get(`${repoURL}/commits/main`, { headers: { 'Accept': 'application/vnd.github.v3+json' } }),
-			execPromise('git rev-parse HEAD')
-		]);
+    try {
+        const [latestHashResult, localHashResult] = await Promise.all([
+            axios.get(`${repoURL}/commits/main`, { headers: { Accept: 'application/vnd.github.v3+json' } }),
+            execPromise('git rev-parse HEAD')
+        ]);
 
-		const latestCommit = latestCommitResponse.data;
-		const remoteHash = latestCommit.sha;
-		const commitMsg = latestCommit.commit.message;
-		const localHash = localHashResult.stdout.trim();
+        const latestHash = latestHashResult.data.sha;
+        const currentHash = localHashResult.stdout.trim();
+        const commitMsg = latestHashResult.data.commit.message;
 
-		const lastHash = config.lastHash || null;
+        if (currentHash !== latestHash) {
+            console.warn(`${client.user.username}: Update Available! Run "git pull" to update!`);
+        }
 
-		if (remoteHash !== localHash && remoteHash !== lastHash) 
-		{
-			config.lastHash = remoteHash;
-			writeConfig(config);
-
-			const channel = await client.channels.fetch(config.eventsChannel);
-			channel.send({
-				embeds: [createMsg({ title: 'Update available!', desc: `**Summary:**\n\`${commitMsg}\`` })],
-				components: [updateButton]
-			});
-		} 
-		else 
-		{
-			console.log(client.user.username + ' is up to date!');
-		}
-	} 
-	catch (error) 
-	{
-		console.error('Error checking for updates:', error);
-		const channel = await client.channels.fetch(config.eventsChannel); 
-		channel.send({ embeds: [createMsg({ title: config.guild, desc: '**Error checking for updates!**' })] });
-	}
+        if (config.latestHash !== latestHash) {
+            const channel = await client.channels.fetch(config.eventsChannel);
+            await channel.send({
+                embeds: [createMsg({ title: 'Update available!', desc: `**Summary:**\n\`${commitMsg}\`` })],
+                components: [updateButton]
+            });
+            config.latestHash = latestHash;
+            writeConfig(config);
+        }
+    }
+    catch (error) {
+        console.error('Error checking for updates:', error);
+        const channel = await client.channels.fetch(config.eventsChannel);
+        await channel.send({ embeds: [createMsg({ title: config.guild, desc: '**Error checking for updates!**' })] });
+    }
 }
 
-module.exports = 
+module.exports =
 [
-	{
-		name: Events.ClientReady,
-		async execute(client) 
-		{
-			await updateCheck(client);
+    {
+        name: Events.ClientReady,
+        async execute(client) {
+            await updateCheck(client);
 
-			setInterval(async () => { 
-				await updateCheck(client);
-			}, 3600000);
-		}
-	}
+            setInterval(async() => {
+                await updateCheck(client);
+            }, 3600000);
+        }
+    }
 ];

@@ -1,8 +1,8 @@
 const { createMsg, createRow } = require('../../../helper/builder.js');
 
 const settingsMsg = createMsg({
-	title: 'Settings',
-	desc: 
+    title: 'Settings',
+    desc:
 		'1. **Guild** *Required*\n' +
         'Enter your Hypixel guild name.\n\n' +
 
@@ -27,23 +27,22 @@ const settingsMsg = createMsg({
 });
 
 const settingsButtons = createRow([
-	{ id: 'setGuild', label: 'Guild', style: 'Green' },
-	// { id: 'setStaffRole', label: 'Staff Roles', style: 'Green' },
-	{ id: 'setLogsChannel', label: 'Logs Channel', style: 'Green' },
-	{ id: 'setIcon', label: 'Icon', style: 'Green' },
-	{ id: 'setColorTheme', label: 'Color Theme', style: 'Green' }
+    { id: 'setGuild', label: 'Guild', style: 'Green' },
+    // { id: 'setStaffRole', label: 'Staff Roles', style: 'Green' },
+    { id: 'setLogsChannel', label: 'Logs Channel', style: 'Green' },
+    { id: 'setIcon', label: 'Icon', style: 'Green' },
+    { id: 'setColorTheme', label: 'Color Theme', style: 'Green' }
 ]);
 
 const back = createRow([
-	{ id: 'backToSetup', label: 'Back', style: 'Gray' }
+    { id: 'backToSetup', label: 'Back', style: 'Gray' }
 ]);
 
-async function settings(interaction) 
-{
-	await interaction.update({ embeds: [settingsMsg], components: [settingsButtons, back] });
+async function settings(interaction) {
+    await interaction.update({ embeds: [settingsMsg], components: [settingsButtons, back] });
 }
 
-module.exports = 
-{ 
-	settings
+module.exports =
+{
+    settings
 };

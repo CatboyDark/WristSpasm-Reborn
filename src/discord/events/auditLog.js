@@ -5,7 +5,7 @@
 // const config = readConfig();
 // const logsChannel = config.logsChannel;
 
-// async function handleChannelCreate(channel) 
+// async function handleChannelCreate(channel)
 // {
 // 	console.log(channel);
 
