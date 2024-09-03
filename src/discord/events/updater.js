@@ -13,6 +13,7 @@ const updateButton = createRow([
 
 async function updateCheck(client) {
     const config = readConfig();
+    const channel = await client.channels.fetch(config.logsChannel);
 
     try {
         const [latestHashResult, localHashResult] = await Promise.all([
@@ -29,7 +30,6 @@ async function updateCheck(client) {
         }
 
         if (config.latestHash !== latestHash) {
-            const channel = await client.channels.fetch(config.eventsChannel);
             await channel.send({
                 embeds: [createMsg({ title: 'Update available!', desc: `**Summary:**\n\`${commitMsg}\`` })],
                 components: [updateButton]
@@ -40,21 +40,16 @@ async function updateCheck(client) {
     }
     catch (error) {
         console.error('Error checking for updates:', error);
-        const channel = await client.channels.fetch(config.eventsChannel);
         await channel.send({ embeds: [createMsg({ title: config.guild, desc: '**Error checking for updates!**' })] });
     }
 }
 
-module.exports =
-[
-    {
-        name: Events.ClientReady,
-        async execute(client) {
+module.exports = [{
+    name: Events.ClientReady,
+    async execute(client) {
+        await updateCheck(client);
+        setInterval(async() => {
             await updateCheck(client);
-
-            setInterval(async() => {
-                await updateCheck(client);
-            }, 3600000);
-        }
+        }, 3600000);
     }
-];
+}];

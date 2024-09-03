@@ -1,5 +1,4 @@
 {
-	"discord": "",
 	"token": "1234567890",
 	"appID": "1234567890",
 	"hypixelAPI": "1234567890",
@@ -10,7 +9,6 @@
 	"guild": "",
 	"icon": "https://i.imgur.com/9AnnZVG.png",
 	"colorTheme": "ff6ec7",
-	"eventsChannel": "",
 	"logsChannel": "",
 	"logs": {
 	"enabled": true,

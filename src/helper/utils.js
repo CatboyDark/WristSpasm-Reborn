@@ -84,12 +84,14 @@ async function getPlayer(user) {
     return player;
 }
 
-async function getIGN(uuid) {
-    const config = readConfig();
+async function getIGN(client, uuid) {
+    const app = await client.application.fetch();
+    const owner = app.owner;
+
     try {
         const response = await axios.get(`https://playerdb.co/api/player/minecraft/${uuid}`, {
             headers: {
-                'User-Agent': `Discord: ${config.discord}`
+                'User-Agent': `Discord: @${owner.username}`
             }
         });
         return response.data.data.player.username;
@@ -129,7 +131,7 @@ async function getSBLevel(player) {
     const data = await hypixel.getSkyblockProfiles(player).catch(() => null);
     const profile = data.find((profile) => profile.selected)?.me;
 
-    if (profile === null || profile === undefined) return console.log('no profile');
+    if (profile === null || profile === undefined) return console.log('Profiles not found!');
 
     let level = profile.dungeons.experience.level;
     if (level > 50) level = 50;
@@ -209,7 +211,7 @@ async function getNw(player) {
     }
 }
 
-async function updateRoles(interaction, player, addLink = false) {
+async function updateRoles(member, player, addLinkRole = false) {
     const config = readConfig();
     const guild = await getGuild('player', player.uuid);
 
@@ -217,10 +219,10 @@ async function updateRoles(interaction, player, addLink = false) {
     const removedRoles = [];
 
     // Assign Link Role
-    if (addLink) {
+    if (addLinkRole) {
         if (config.features.linkRoleToggle) {
-            if (!interaction.member.roles.cache.has(config.features.linkRole)) {
-                await interaction.member.roles.add(config.features.linkRole);
+            if (!member.roles.cache.has(config.features.linkRole)) {
+                await member.roles.add(config.features.linkRole);
                 addedRoles.push(config.features.linkRole);
             }
         }
@@ -229,14 +231,14 @@ async function updateRoles(interaction, player, addLink = false) {
     // Assign Guild Role
     if (config.features.guildRoleToggle) {
         if (guild && guild.name === config.guild) {
-            if (!interaction.member.roles.cache.has(config.features.guildRole)) {
-                await interaction.member.roles.add(config.features.guildRole);
+            if (!member.roles.cache.has(config.features.guildRole)) {
+                await member.roles.add(config.features.guildRole);
                 addedRoles.push(config.features.guildRole);
             }
         }
         else {
-            if (interaction.member.roles.cache.has(config.features.guildRole)) {
-                await interaction.member.roles.remove(config.features.guildRole);
+            if (member.roles.cache.has(config.features.guildRole)) {
+                await member.roles.remove(config.features.guildRole);
                 removedRoles.push(config.features.guildRole);
             }
         }
@@ -245,8 +247,8 @@ async function updateRoles(interaction, player, addLink = false) {
     // Assign Guild Ranks Roles
     if (config.features.guildRankRolesToggle) {
         if (guild && guild.name === config.guild) {
-            const member = guild.members.find(member => member.uuid === player.uuid);
-            const rank = member.rank;
+            const gmember = guild.members.find(member => member.uuid === player.uuid);
+            const rank = gmember.rank;
             const rankIndex = guild.ranks.findIndex(r => r.name === rank) + 1;
 
             const toggleKey = `guildRank${rankIndex}Toggle`;
@@ -254,15 +256,15 @@ async function updateRoles(interaction, player, addLink = false) {
 
             if (config.features[toggleKey]) {
                 const roleID = config.guildRankRoles[roleKey];
-                const role = interaction.guild.roles.cache.get(roleID);
+                const role = member.guild.roles.cache.get(roleID);
 
-                await interaction.member.roles.add(role);
+                await member.roles.add(role);
                 addedRoles.push(roleID);
             }
 
             for (const [key, id] of Object.entries(config.guildRankRoles)) {
-                if (key !== roleKey && id && interaction.member.roles.cache.has(id)) {
-                    await interaction.member.roles.remove(id);
+                if (key !== roleKey && id && member.roles.cache.has(id)) {
+                    await member.roles.remove(id);
                     removedRoles.push(id);
                 }
             }
@@ -276,15 +278,15 @@ async function updateRoles(interaction, player, addLink = false) {
         const assignedRole = config.levelRoles[levelKey];
 
         if (assignedRole) {
-            if (!interaction.member.roles.cache.has(assignedRole)) {
-                await interaction.member.roles.add(assignedRole);
+            if (!member.roles.cache.has(assignedRole)) {
+                await member.roles.add(assignedRole);
                 addedRoles.push(assignedRole);
             }
         }
 
         for (const roleID of Object.values(config.levelRoles)) {
-            if (roleID !== assignedRole && interaction.member.roles.cache.has(roleID)) {
-                await interaction.member.roles.remove(roleID);
+            if (roleID !== assignedRole && member.roles.cache.has(roleID)) {
+                await member.roles.remove(roleID);
                 removedRoles.push(roleID);
             }
         }
@@ -300,15 +302,15 @@ async function updateRoles(interaction, player, addLink = false) {
         }
 
         if (highestCataRole) {
-            if (!interaction.member.roles.cache.has(highestCataRole)) {
-                await interaction.member.roles.add(highestCataRole);
+            if (!member.roles.cache.has(highestCataRole)) {
+                await member.roles.add(highestCataRole);
                 addedRoles.push(highestCataRole);
             }
         }
 
         for (const [level, roleID] of Object.entries(config.cataRoles)) {
-            if (roleID !== highestCataRole && interaction.member.roles.cache.has(roleID)) {
-                await interaction.member.roles.remove(roleID);
+            if (roleID !== highestCataRole && member.roles.cache.has(roleID)) {
+                await member.roles.remove(roleID);
                 removedRoles.push(roleID);
             }
         }

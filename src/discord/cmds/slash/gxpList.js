@@ -22,21 +22,22 @@ function splitMsg(array, maxLength) {
     return result;
 }
 
-module.exports =
-{
+module.exports = {
     name: 'gxplist',
-    desc: 'Displays GXP from the last 7 days',
+    desc: 'Displays GXP list',
     options: [
+        { type: 'integer', name: 'days', desc: 'Filter GXP obtained in the last x days (Default: 7)' },
         { type: 'string', name: 'gxp', desc: 'Filter members by GXP below this threshold (\'50000\' or \'50k\')' },
         { type: 'integer', name: 'join_date', desc: 'Filter members who joined more than x days ago' }
     ],
 
     async execute(interaction) {
+        const limitInput = interaction.options.getInteger('days') || 7;
         const thresholdInput = interaction.options.getString('gxp');
         const joinDateInput = interaction.options.getInteger('join_date');
 
         let threshold = null;
-        let timeLimitDate = null;
+        let beforeJoinDate = null;
 
         if (thresholdInput) {
             const thresholdMatch = thresholdInput.match(/^(\d+)(k)?$/i);
@@ -48,9 +49,10 @@ module.exports =
                 return interaction.reply({ embeds: [invalidThreshold], ephemeral: true });
             }
         }
+
         if (joinDateInput !== null) {
             const currentDate = new Date();
-            timeLimitDate = new Date(currentDate.setDate(currentDate.getDate() - joinDateInput));
+            beforeJoinDate = new Date(currentDate.setDate(currentDate.getDate() - joinDateInput));
         }
 
         await interaction.deferReply();
@@ -58,18 +60,23 @@ module.exports =
         const config = readConfig();
         const success = await interaction.followUp({ embeds: [createMsg({ title: config.guild, desc: '**Gathering data...**', icon: config.icon })] });
 
-        let gxp = await getGXP();
+        let gxp = await getGXP(interaction.client);
+
+        const dateLimit = new Date();
+        dateLimit.setDate(dateLimit.getDate() - limitInput);
+
         if (threshold !== null) gxp = gxp.filter(member => member.gxp < threshold);
-        if (timeLimitDate !== null) gxp = gxp.filter(member => new Date(member.joinDate) < timeLimitDate);
+        if (beforeJoinDate !== null) gxp = gxp.filter(member => new Date(member.joinDate) < beforeJoinDate);
 
         await success.delete();
 
         const ignGxpPairs = gxp.map(member => `${member.ign.replace(/_/g, '\\_')} ${member.gxp}`);
         const chunks = splitMsg(ignGxpPairs, maxLength);
 
+        const formattedDays = `- **Last ${limitInput} Days**`;
         const formattedThreshold = thresholdInput !== null ? `- **Below ${Math.floor(threshold / 1000)}k**` : '';
         const formattedJoinDate = joinDateInput !== null ? `- **Joined ${joinDateInput}+ Days Ago**` : '';
-        const embedDesc = [formattedThreshold, formattedJoinDate].filter(Boolean).join('\n');
+        const embedDesc = [formattedDays, formattedThreshold, formattedJoinDate].filter(Boolean).join('\n');
 
         for (let i = 0; i < chunks.length; i++) {
             const chunk = chunks[i];

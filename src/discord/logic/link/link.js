@@ -73,7 +73,7 @@ async function link(interaction) {
                 if (e.message.includes('Missing Permissions')) interaction.followUp({ embeds: [createMsg({ color: 'FFD800', desc: '**I don\'t have permission to change your nickname!**' })] });
             });
 
-        const { addedRoles, removedRoles } = await updateRoles(interaction, player, true);
+        const { addedRoles, removedRoles } = await updateRoles(interaction.member, player, true);
 
         let desc;
         if (addedRoles.length > 0 && removedRoles.length > 0) {

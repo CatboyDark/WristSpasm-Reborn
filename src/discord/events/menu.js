@@ -35,7 +35,6 @@ module.exports =
         async execute(interaction) {
             if (!interaction.isStringSelectMenu()) return;
             log(interaction);
-
             await menuHandler(interaction);
         }
     }

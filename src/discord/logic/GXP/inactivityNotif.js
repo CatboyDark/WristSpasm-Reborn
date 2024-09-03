@@ -1,7 +1,7 @@
 const { createMsg, createRow, createModal } = require('../../../helper/builder.js');
 const { readConfig, getPlayer, getGuild } = require('../../../helper/utils.js');
-const { Link, Inactivity } = require('../../../mongo/schemas.js');
-const { getGXPList } = require('./getGXP.js');
+const { Inactivity, Link } = require('../../../mongo/schemas.js');
+const { getGXP, getPurge } = require('./getGXP.js');
 
 const config = readConfig();
 
@@ -41,22 +41,13 @@ const splitDescription = (text) => {
 
 async function sendStaffInactivityNotif(client) {
     const purgeID = genID();
-    let inactivityList = await getGXPList();
+    const channel = client.channels.cache.get('1070774833916424253');
 
-    
-
-    const channel = client.channels.cache.get(config.eventsChannel);
-
-    const fourteenDaysAgo = new Date();
-    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
-
-    inactivityList = inactivityList.filter(member =>
-        new Date(member.joinDate) < fourteenDaysAgo && member.gxp < 50000
-    );
+    const purgeList = await getPurge(client);
 
     const chunks = [];
-    for (let i = 0; i < inactivityList.length; i += 50) {
-        chunks.push(inactivityList.slice(i, i + 50));
+    for (let i = 0; i < purgeList.length; i += 50) {
+        chunks.push(purgeList.slice(i, i + 50));
     }
 
     for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
@@ -69,11 +60,8 @@ async function sendStaffInactivityNotif(client) {
             gxpList += `${member.gxp}\n`;
         }
 
-
         const ignListChunks = splitDescription(ignList);
         const gxpListChunks = splitDescription(gxpList);
-
-        const embedTitle = 'Purge Notification';
 
         for (let i = 0; i < ignListChunks.length; i++) {
             const embedOptions = {
@@ -87,7 +75,7 @@ async function sendStaffInactivityNotif(client) {
             };
 
             if (i === 0 && chunkIndex === 0) {
-                embedOptions.title = embedTitle;
+                embedOptions.title = 'Purge Notification';
                 embedOptions.desc = '**A DM has been sent to the following members!**';
             }
 
@@ -97,10 +85,9 @@ async function sendStaffInactivityNotif(client) {
     }
 }
 
-function sendInactivityNotif(client) {
+async function sendInactivityNotif(client) {
     const purgeID = genID();
     const timestamp = genTimestamp();
-    const channel = client.channels.cache.get(config.eventsChannel);
 
     const inactivityMsg = createMsg({
         title: 'WristSpasm',
@@ -117,9 +104,26 @@ function sendInactivityNotif(client) {
         { id: 'inactivityRequest', label: 'Submit an Inactivity Request', style: 'Green' }
     ]);
 
-    channel.send({ embeds: [inactivityMsg], components: [buttons] });
-}
+    try {
+        const linkedPlayers = await Link.find({});
+        const map = new Map(linkedPlayers.map(player => [player.uuid, player.dcid]));
 
+        const inactivityList = await getPurge(client);
+
+        for (const member of inactivityList) {
+            const dcid = map.get(member.uuid);
+            if (dcid) {
+                const user = await client.users.fetch(dcid);
+                if (user) {
+                    await user.send({ embeds: [inactivityMsg], components: [buttons] });
+                }
+            }
+        }
+    }
+    catch (error) {
+        console.error('Error sending inactivity notifications:', error);
+    }
+}
 
 async function checkGXP(interaction) {
     const i = await Link.findOne({ dcid: interaction.user.id }).exec();

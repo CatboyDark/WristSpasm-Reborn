@@ -17,6 +17,7 @@ module.exports =
 
     async execute(interaction) {
         const user = interaction.options.getUser('discord');
+        const member = interaction.guild.members.cache.get(user.id);
         const check = await getEmoji('check');
         const plus = await getEmoji('plus');
         const minus = await getEmoji('minus');
@@ -35,27 +36,22 @@ module.exports =
                 await Link.create({ uuid: player.uuid, dcid: user.id });
             }
 
-            const { addedRoles, removedRoles } = await updateRoles(interaction, player, true);
+            const { addedRoles, removedRoles } = await updateRoles(member, player, true);
 
-            let desc;
+            let roleDesc = '';
             if (addedRoles.length > 0 && removedRoles.length > 0) {
-                desc = `${check} **Account linked!**\n_ _\n`;
-                desc += `${addedRoles.map(roleID => `${plus} <@&${roleID}>`).join('\n')}\n_ _\n`;
-                desc += `${removedRoles.map(roleID => `${minus} <@&${roleID}>`).join('\n')}`;
+                roleDesc = `\n\n${addedRoles.map(roleID => `${plus} <@&${roleID}>`).join('\n')}\n_ _\n`;
+                roleDesc += `${removedRoles.map(roleID => `${minus} <@&${roleID}>`).join('\n')}`;
             }
             else if (addedRoles.length > 0) {
-                desc = `${check} **Account linked!**\n_ _\n`;
-                desc += `${addedRoles.map(roleID => `${plus} <@&${roleID}>`).join('\n')}\n_ _`;
+                roleDesc = `\n\n${addedRoles.map(roleID => `${plus} <@&${roleID}>`).join('\n')}\n_ _`;
             }
             else if (removedRoles.length > 0) {
-                desc = `${check} **Account linked!**\n_ _\n`;
-                desc += `${removedRoles.map(roleID => `${minus} <@&${roleID}>`).join('\n')}\n_ _`;
-            }
-            else {
-                desc = `${check} **Account linked!**`;
+                roleDesc = `\n\n${removedRoles.map(roleID => `${minus} <@&${roleID}>`).join('\n')}\n_ _`;
             }
 
-            await interaction.followUp({ embeds: [createMsg({ desc: `**Successfully linked ${user} to ${player.nickname}**` })] });
+            const desc = `${check} **Successfully linked ${user} to ${player.nickname}**${roleDesc}`;
+
             await interaction.followUp({ embeds: [createMsg({ desc })] });
         }
         catch (e) {
