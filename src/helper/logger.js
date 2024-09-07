@@ -92,9 +92,11 @@ async function log(interaction) {
     if (interaction.isButton()) await buttonCounter(interaction.component.label, interaction.customId);
 
     const config = readConfig();
-    const logsChannel = await interaction.guild.channels.cache.get(config.logsChannel);
+    const server = config.serverID;
+    const guild = await interaction.client.guilds.cache.get(server);
+    const channel = await guild.channels.cache.get(config.logsChannel);
     const message = await createLogMsg(interaction);
-    if (message) await logsChannel.send({ embeds: [message] });
+    if (message) await channel.send({ embeds: [message] });
 }
 
 module.exports = log;

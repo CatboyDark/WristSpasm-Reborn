@@ -1,7 +1,7 @@
 const { createMsg, createRow, createModal } = require('../../../helper/builder.js');
 const { readConfig, getPlayer, getGuild } = require('../../../helper/utils.js');
 const { Inactivity, Link } = require('../../../mongo/schemas.js');
-const { getGXP, getPurge } = require('./getGXP.js');
+const { getPurge } = require('./getGXP.js');
 
 const config = readConfig();
 
@@ -10,8 +10,7 @@ function genID() {
 
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const dateString = `${year}${month}${day}`;
+    const dateString = `${year}${month}`;
 
     const periodIndex = Math.floor((date.getDate() - 1) / 14);
     const suffix = String.fromCharCode(65 + periodIndex);
@@ -96,7 +95,7 @@ async function sendInactivityNotif(client) {
             'You have not met our **50k** weekly GXP requirement!\n' +
             'If you are unable to play, please submit an inactivity request.\n\n_ _',
         footer: `Purge ID: ${purgeID}`,
-        footerIcon: 'https://raw.githubusercontent.com/CatboyDark/WristSpasm-Reborn/main/assets/wristspazm.png'
+        footerIcon: 'https://i.imgur.com/uwqAaeb.png'
     });
 
     const buttons = createRow([
@@ -113,16 +112,17 @@ async function sendInactivityNotif(client) {
         for (const member of inactivityList) {
             const dcid = map.get(member.uuid);
             if (dcid) {
-                const user = await client.users.fetch(dcid);
-                if (user) {
-                    await user.send({ embeds: [inactivityMsg], components: [buttons] });
-                }
+            	const user = await client.users.fetch(dcid);
+                await user.send({ embeds: [inactivityMsg], components: [buttons] }).catch(sendError => {
+                    if (sendError.code === 50007) console.warn(`${user.username} has DMs off!`);
+                });
             }
-        }
+    	}
     }
     catch (error) {
         console.error('Error sending inactivity notifications:', error);
     }
+    console.log('Inactivity notifications sent!');
 }
 
 async function checkGXP(interaction) {

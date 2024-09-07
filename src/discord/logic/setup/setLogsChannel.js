@@ -26,6 +26,7 @@ async function setLogsChannel(interaction) {
 
     const config = readConfig();
     config.logsChannel = input;
+    config.serverID = interaction.guild.id;
     writeConfig(config);
 
     interaction.reply({ embeds: [createMsg({ desc: `**Logs Channel has been set to** <#${input}>` })], ephemeral: true });
