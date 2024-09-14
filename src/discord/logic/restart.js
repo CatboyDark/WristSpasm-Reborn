@@ -2,6 +2,7 @@ const { exec } = require('child_process');
 const util = require('util');
 const execPromise = util.promisify(exec);
 const app = require('../../../start.js');
+const { createMsg } = require('../../helper/builder.js');
 
 async function restart(client) {
     try {
@@ -22,7 +23,7 @@ async function restart(client) {
 async function update(interaction) {
     await interaction.deferReply();
     await restart(interaction.client);
-    await interaction.followUp(`**${interaction.client.user.username} has been updated!**`);
+    await interaction.followUp({ embeds: [createMsg({ desc: `**${interaction.client.user.username} has been updated!**` })] });
 }
 
 module.exports =
