@@ -14,7 +14,8 @@ const updateButton = createRow([
 async function updateCheck(client) {
     const config = readConfig();
     const channel = await client.channels.fetch(config.logsChannel);
-    const owner = client.owner;
+    const app = await client.application.fetch();
+    const owner = app.owner;
 
     try {
         const [latestHashResult, localHashResult] = await Promise.all([
