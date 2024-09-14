@@ -1,4 +1,4 @@
-const { createModal, createMsg, createError } = require('../../../helper/builder.js');
+const { createForm, createMsg, createError } = require('../../../helper/builder.js');
 const { readConfig, writeConfig } = require('../../../helper/utils.js');
 
 const invalidRole = createError('**That\'s not a valid role ID!**');
@@ -7,7 +7,7 @@ const noPerms = createError('**You do not have permission to assign that role!**
 async function setWelcomeRole(interaction) {
 
     if (!interaction.isModalSubmit()) {
-        const modal = createModal({
+        const modal = createForm({
             id: 'setWelcomeRoleForm',
             title: 'Set Welcome Channel',
             components: [{

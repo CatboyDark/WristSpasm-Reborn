@@ -1,6 +1,7 @@
 const { exec } = require('child_process');
 const util = require('util');
 const execPromise = util.promisify(exec);
+const app = require('../../../start.js');
 
 async function restart(client) {
     try {
@@ -8,7 +9,9 @@ async function restart(client) {
         await execPromise('git pull');
 
         await client.destroy();
-        await execPromise('pm2 restart Eris');
+
+        await app.init();
+        await app.start();
     }
     catch (error) {
         console.error('Error during restart:', error);

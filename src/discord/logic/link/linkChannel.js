@@ -1,4 +1,4 @@
-const { createModal, createMsg, createError } = require('../../../helper/builder.js');
+const { createForm, createMsg, createError } = require('../../../helper/builder.js');
 const { createLinkMsg, linkButtons } = require('./link.js');
 
 const invalidChannel = createError('**That\'s not a valid Channel ID!**');
@@ -6,7 +6,7 @@ const invalidChannel = createError('**That\'s not a valid Channel ID!**');
 async function setLinkChannel(interaction) {
 
     if (!interaction.isModalSubmit()) {
-        const modal = createModal({
+        const modal = createForm({
             id: 'setLinkChannelForm',
             title: 'Set Link Channel',
             components: [{

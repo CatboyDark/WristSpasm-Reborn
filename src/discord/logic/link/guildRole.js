@@ -1,4 +1,4 @@
-const { createModal, createRow, createError } = require('../../../helper/builder.js');
+const { createForm, createRow, createError } = require('../../../helper/builder.js');
 const { writeConfig, toggleConfig, readConfig } = require('../../../helper/utils.js');
 
 const invalidRole = createError('**That\'s not a valid Role ID!**');
@@ -23,7 +23,7 @@ async function guildRoleToggle(interaction) {
 
     if (!config.features.guildRoleToggle) {
         if (!interaction.isModalSubmit()) {
-            const modal = createModal({
+            const modal = createForm({
                 id: 'guildRoleToggle',
                 title: 'Set Guild Role',
                 components: [{

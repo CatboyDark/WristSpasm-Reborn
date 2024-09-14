@@ -1,6 +1,6 @@
 const { Link } = require('../../../mongo/schemas.js');
 const Errors = require('hypixel-api-reborn');
-const { createMsg, createRow, createModal, createError } = require('../../../helper/builder.js');
+const { createMsg, createRow, createForm, createError } = require('../../../helper/builder.js');
 const { getEmoji, getDiscord, getPlayer, updateRoles } = require('../../../helper/utils.js');
 
 const notLinked = createError('**Discord is not linked!**\n_ _\nClick on **How To Link** for more info.');
@@ -37,7 +37,7 @@ const linkButtons = createRow([
     { id: 'linkHelp', label: 'How To Link', style: 'Gray' }
 ]);
 
-const modal = createModal({
+const modal = createForm({
     id: 'linkForm',
     title: 'Link Your Account',
     components: [{

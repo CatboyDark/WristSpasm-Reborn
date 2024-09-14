@@ -1,4 +1,4 @@
-const { createModal, createMsg, createError } = require('../../../helper/builder.js');
+const { createForm, createMsg, createError } = require('../../../helper/builder.js');
 const { readConfig, writeConfig } = require('../../../helper/utils.js');
 
 const isValidURL = (url) => /\.(jpg|jpeg|png|gif|webp)$/i.test(url);
@@ -8,7 +8,7 @@ const invalidURL = createError('**Invalid URL!**\n\nDiscord supports: **.jpg .jp
 async function setIcon(interaction) {
 
     if (!interaction.isModalSubmit()) {
-        const modal = createModal({
+        const modal = createForm({
             id: 'setIconForm',
             title: 'Set Icon',
             components: [{

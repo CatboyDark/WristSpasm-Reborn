@@ -1,5 +1,5 @@
 const { ActivityType } = require('discord.js');
-const { createModal, createMsg, createError } = require('../../../helper/builder.js');
+const { createForm, createMsg, createError } = require('../../../helper/builder.js');
 const { readConfig, writeConfig, getGuild } = require('../../../helper/utils.js');
 const { Errors } = require('hypixel-api-reborn');
 
@@ -8,7 +8,7 @@ const invalidGuild = createError('**Invalid Guild!**');
 async function setGuild(interaction) {
 
     if (!interaction.isModalSubmit()) {
-        const modal = createModal({
+        const modal = createForm({
             id: 'setGuildForm',
             title: 'Set Guild',
             components: [{

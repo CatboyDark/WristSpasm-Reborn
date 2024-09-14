@@ -1,4 +1,4 @@
-const { createModal, createMsg, createError } = require('../../../helper/builder.js');
+const { createForm, createMsg, createError } = require('../../../helper/builder.js');
 const { readConfig, writeConfig } = require('../../../helper/utils.js');
 
 const invalidHEX = createError('**That\'s not a valid HEX color!**');
@@ -6,7 +6,7 @@ const invalidHEX = createError('**That\'s not a valid HEX color!**');
 async function setColorTheme(interaction) {
 
     if (!interaction.isModalSubmit()) {
-        const modal = createModal({
+        const modal = createForm({
             id: 'setColorThemeForm',
             title: 'Set Color Theme',
             components: [{

@@ -1,4 +1,4 @@
-// const { createModal, createMsg, createError } = require('../../../helper/builder.js');
+// const { createForm, createMsg, createError } = require('../../../helper/builder.js');
 // const { readConfig, writeConfig } = require('../../../helper/utils.js');
 
 // const invalidRole = createError('**That\'s not a valid Role ID!**');
@@ -6,7 +6,7 @@
 // async function setStaffRole(interaction) {
 
 //     if (!interaction.isModalSubmit()) {
-//         const modal = createModal({
+//         const modal = createForm({
 //             id: 'setStaffRoleForm',
 //             title: 'Set Staff Role(s)',
 //             components: [{

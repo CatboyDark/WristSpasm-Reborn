@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-const { createMsg, createRow, createModal, createError } = require('../../../helper/builder.js');
+const { createMsg, createRow, createForm, createError } = require('../../../helper/builder.js');
 const { readConfig, writeConfig, toggleConfig } = require('../../../helper/utils.js');
 
 const invalidRole = createError('**That\'s not a valid Role ID!**');
@@ -73,7 +73,7 @@ async function createLevelRoles(interaction) {
 
         const level = levels.find(l => l.id === selectedOption);
 
-        const modal = createModal({
+        const modal = createForm({
             id: `${selectedOption}Form`,
             title: `${level.label} Role`,
             components: [{
@@ -113,7 +113,7 @@ async function levelRolesToggle(interaction) {
 
 async function removeLevelRole(interaction) {
     if (interaction.isButton()) {
-        const modal = createModal({
+        const modal = createForm({
             id: 'removeLevelRoleForm',
             title: 'Remove Level Role',
             components: [{

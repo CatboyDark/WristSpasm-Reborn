@@ -99,7 +99,7 @@ function createRow(components) {
     return actionRow;
 }
 
-function createModal({ id, title, components }) {
+function createForm({ id, title, components }) {
     const modal = new ModalBuilder()
         .setCustomId(id)
         .setTitle(title);
@@ -198,6 +198,6 @@ module.exports =
     createMsg,
     createError,
     createRow,
-    createModal,
+    createForm,
     createSlash
 };

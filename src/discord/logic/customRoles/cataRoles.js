@@ -1,4 +1,4 @@
-const { createMsg, createRow, createModal, createError } = require('../../../helper/builder.js');
+const { createMsg, createRow, createForm, createError } = require('../../../helper/builder.js');
 const { readConfig, writeConfig, toggleConfig } = require('../../../helper/utils.js');
 
 const invalidCata = createError('**That\'s not a valid Cata level!**');
@@ -41,7 +41,7 @@ async function cataRolesToggle(interaction) {
 
 async function createCataRoles(interaction) {
     if (interaction.isButton()) {
-        const modal = createModal({
+        const modal = createForm({
             id: 'createCataRolesForm',
             title: 'Create Cata Role',
             components: [
@@ -81,7 +81,7 @@ async function createCataRoles(interaction) {
 
 async function deleteCataRoles(interaction) {
     if (interaction.isButton()) {
-        const modal = createModal({
+        const modal = createForm({
             id: 'deleteCataRolesForm',
             title: 'Remove Cata Role',
             components: [{

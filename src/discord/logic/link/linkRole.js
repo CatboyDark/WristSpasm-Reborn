@@ -1,4 +1,4 @@
-const { createModal, createRow, createError } = require('../../../helper/builder.js');
+const { createForm, createRow, createError } = require('../../../helper/builder.js');
 const { readConfig, writeConfig, toggleConfig } = require('../../../helper/utils.js');
 
 const invalidRole = createError('**That\'s not a valid Role ID!**');
@@ -23,7 +23,7 @@ async function linkRoleToggle(interaction) {
 
     if (!config.features.linkRoleToggle) {
         if (!interaction.isModalSubmit()) {
-            const modal = createModal({
+            const modal = createForm({
                 id: 'linkRoleToggle',
                 title: 'Set Link Role',
                 components: [{
