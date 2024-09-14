@@ -43,7 +43,7 @@ async function updateCheck(client) {
     }
     catch (error) {
         console.error('Error checking for updates:', error);
-        await channel.send({ embeds: [createMsg({ title: config.guild, desc: '**Error checking for updates!**' })] });
+        await channel.send({ embeds: [createMsg({ title: config.guild, color: 'FF0000', desc: '**Error checking for updates!**' })] });
     }
 }
 
