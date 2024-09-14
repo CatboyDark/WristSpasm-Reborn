@@ -6,7 +6,7 @@ const { createMsg, createRow } = require('../../helper/builder.js');
 const axios = require('axios');
 const execPromise = util.promisify(exec);
 
-const repoURL = 'https://api.github.com/repos/CatboyDark/WristSpasm-Reborn';
+const repoURL = 'https://api.github.com/repos/CatboyDark/Eris';
 const updateButton = createRow([
     { id: 'update', label: 'Update', style: 'Green' }
 ]);
@@ -18,10 +18,10 @@ async function updateCheck(client) {
     try {
         const [latestHashResult, localHashResult] = await Promise.all([
             axios.get(`${repoURL}/commits/main`, { headers: { Accept: 'application/vnd.github.v3+json' } }),
-            execPromise('git rev-parse HEAD')
+            execPromise('git rev-parse --short HEAD')
         ]);
 
-        const latestHash = latestHashResult.data.sha;
+        const latestHash = latestHashResult.data.sha.substring(0, 7);
         const currentHash = localHashResult.stdout.trim();
         const commitMsg = latestHashResult.data.commit.message;
 
