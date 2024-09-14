@@ -1,4 +1,4 @@
-const { createMsg, createRow, createModal } = require('../../../helper/builder.js');
+const { createMsg, createRow, createForm } = require('../../../helper/builder.js');
 const { readConfig, getPlayer, getGuild } = require('../../../helper/utils.js');
 const { Inactivity, Link } = require('../../../mongo/schemas.js');
 const { getPurge } = require('./getGXP.js');
@@ -10,7 +10,8 @@ function genID() {
 
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
-    const dateString = `${year}${month}`;
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateString = `${year}${month}${day}`;
 
     const periodIndex = Math.floor((date.getDate() - 1) / 14);
     const suffix = String.fromCharCode(65 + periodIndex);
@@ -95,7 +96,7 @@ async function sendInactivityNotif(client) {
             'You have not met our **50k** weekly GXP requirement!\n' +
             'If you are unable to play, please submit an inactivity request.\n\n_ _',
         footer: `Purge ID: ${purgeID}`,
-        footerIcon: 'https://i.imgur.com/uwqAaeb.png'
+        footerIcon: 'https://raw.githubusercontent.com/CatboyDark/WristSpasm-Reborn/main/assets/wristspazm.png'
     });
 
     const buttons = createRow([
@@ -112,12 +113,19 @@ async function sendInactivityNotif(client) {
         for (const member of inactivityList) {
             const dcid = map.get(member.uuid);
             if (dcid) {
-            	const user = await client.users.fetch(dcid);
-                await user.send({ embeds: [inactivityMsg], components: [buttons] }).catch(sendError => {
-                    if (sendError.code === 50007) console.warn(`${user.username} has DMs off!`);
-                });
+                try {
+                    const user = await client.users.fetch(dcid);
+                    if (user) {
+                        await user.send({ embeds: [inactivityMsg], components: [buttons] });
+                    }
+                }
+                catch (sendError) {
+                    if (sendError.code === 50007) {
+                        console.error(`${dcid} has DMs off!`);
+                    }
+                }
             }
-    	}
+        }
     }
     catch (error) {
         console.error('Error sending inactivity notifications:', error);
@@ -141,7 +149,7 @@ async function checkGXP(interaction) {
 
 async function inactivityRequest(interaction) {
     if (interaction.isButton()) {
-        const modal = createModal({
+        const modal = createForm({
             id: 'inactivityRequestForm',
             title: 'Submit an Inactivity Request',
             components: [{
@@ -169,10 +177,10 @@ async function inactivityRequest(interaction) {
         await interaction.reply({ embeds: [createMsg({
             title: 'WristSpasm',
             desc:
-				'**Your inactivity request has been submitted!**\n' +
-				`**Reason:** ${reason}\n\n` +
+                                '**Your inactivity request has been submitted!**\n' +
+                                `**Reason:** ${reason}\n\n` +
 
-				'**You will not be purged this week.** :thumbsup:\n\n_ _',
+                                '**You will not be purged this week.** :thumbsup:\n\n_ _',
             footer: `Purge ID: ${purgeID}`,
             footerIcon: 'https://raw.githubusercontent.com/CatboyDark/WristSpasm-Reborn/main/assets/wristspazm.png'
         })] });
@@ -186,3 +194,5 @@ module.exports =
     checkGXP,
     inactivityRequest
 };
+
+

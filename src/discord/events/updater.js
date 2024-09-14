@@ -6,7 +6,7 @@ const { createMsg, createRow } = require('../../helper/builder.js');
 const axios = require('axios');
 const execPromise = util.promisify(exec);
 
-const repoURL = 'https://api.github.com/repos/CatboyDark/Eris';
+const repoURL = 'https://api.github.com/repos/CatboyDark/WristSpasm-Reborn';
 const updateButton = createRow([
     { id: 'update', label: 'Update', style: 'Green' }
 ]);
