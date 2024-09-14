@@ -23,7 +23,7 @@ async function restart(client) {
 async function update(interaction) {
     await interaction.deferReply();
     await restart(interaction.client);
-    await interaction.followUp({ embeds: [createMsg({ desc: `**${interaction.client.user.username} has been updated!**` })] });
+    await interaction.followUp({ embeds: [createMsg({ color: '00FF00', desc: `**${interaction.client.user.username} has been updated!**` })] });
 }
 
 module.exports =
