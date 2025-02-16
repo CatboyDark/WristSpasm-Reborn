@@ -30,7 +30,7 @@ Created by CatboyDark on Apr 29, 2024 <br />
 </div>
 
 > [!NOTE]
-> This project values minimalism. Contributors will not recieve any credits on the frontend, with the exception of the credits section within the /help command.
+> This project values minimalism. Contributors will not recieve any credits on the frontend, with the exception of the **Credits** section within the `/help` command.
 
 <div align="center">
     
